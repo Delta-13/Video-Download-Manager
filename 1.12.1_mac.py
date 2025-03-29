@@ -6,12 +6,29 @@ import os
 import re
 import sys
 from yt_dlp import YoutubeDL
+from ttkthemes import ThemedTk
+
+
+# 定义全局字体变量
+# 字体格式为 (字体名称, 字号, 可选样式)
+# 例如: ("Microsoft YaHei", 10, "bold") 粗体
+# ("Microsoft YaHei", 10, "italic") 斜体
+# 若需使用其他中文字体，如黑体：("SimHei", 10)
+# 楷体：("KaiTi", 10)
+# 宋体：("SimSun", 10)
+GLOBAL_FONT = ("SimSun", 10)
 
 class YtdlpGUI:
     def __init__(self, master):
         self.master = master
-        self.master.title("Yt-dlp GUI")
+        self.master.title("Video Download Manager")
 
+        # 全局字体设置
+        self.master.option_add("*Font", GLOBAL_FONT)
+        # 若想针对按钮、复选框等控件单独指定字体：
+        self.master.option_add("*TButton.Font", GLOBAL_FONT)
+        self.master.option_add("*TCheckbutton.Font", GLOBAL_FONT)
+        
         # 上方输入区域
         self.url_label = tk.Label(master, text="视频URL:")
         self.url_label.grid(row=0, column=0, padx=5, pady=5, sticky="e")
@@ -26,16 +43,16 @@ class YtdlpGUI:
         self.path_entry = tk.Entry(master, textvariable=self.path_var, width=50)
         self.path_entry.grid(row=1, column=1, padx=5, pady=5)
 
-        self.browse_button = tk.Button(master, text="浏览", command=self.browse_path)
+        self.browse_button = ttk.Button(master, text="浏览", command=self.browse_path)
         self.browse_button.grid(row=1, column=2, padx=5, pady=5)
 
         # 按钮行：扫描链接、扫描字幕、开始下载
         self.button_frame = tk.Frame(master)
         self.button_frame.grid(row=2, column=0, columnspan=3, pady=5)
         
-        self.scan_link_button = tk.Button(self.button_frame, text="扫描链接", command=self.start_scan_thread)
-        self.scan_subs_button = tk.Button(self.button_frame, text="扫描字幕", command=self.start_sub_scan_thread)
-        self.download_button = tk.Button(self.button_frame, text="开始下载", command=self.start_download_thread)
+        self.scan_link_button = ttk.Button(self.button_frame, text="扫描链接", command=self.start_scan_thread)
+        self.scan_subs_button = ttk.Button(self.button_frame, text="扫描字幕", command=self.start_sub_scan_thread)
+        self.download_button = ttk.Button(self.button_frame, text="开始下载", command=self.start_download_thread)
 
         self.scan_link_button.pack(side=tk.LEFT, padx=10)
         self.scan_subs_button.pack(side=tk.LEFT, padx=10)
@@ -68,18 +85,18 @@ class YtdlpGUI:
         self.option_frame.grid(row=5, column=0, columnspan=3, pady=5)
 
         self.audio_only_var = tk.BooleanVar()
-        self.audio_only_check = tk.Checkbutton(self.option_frame, text="只下载音频(MP3)", variable=self.audio_only_var, command=self.on_audio_only_check)
+        self.audio_only_check = ttk.Checkbutton(self.option_frame, text="只下载音频(MP3)", variable=self.audio_only_var, command=self.on_audio_only_check)
         self.audio_only_check.pack(side=tk.LEFT, padx=20)
 
         self.subtitles_var = tk.BooleanVar()
-        self.subtitles_check = tk.Checkbutton(self.option_frame, text="下载字幕", variable=self.subtitles_var, command=self.on_subtitles_check)
+        self.subtitles_check = ttk.Checkbutton(self.option_frame, text="下载字幕", variable=self.subtitles_var, command=self.on_subtitles_check)
         self.subtitles_check.pack(side=tk.LEFT, padx=20)
 
         # 输出显示框
         self.output_text = tk.Text(master, height=15, width=60)
         self.output_text.grid(row=6, column=0, columnspan=3, padx=5, pady=5)
 
-        self.scrollbar = tk.Scrollbar(master, command=self.output_text.yview)
+        self.scrollbar = ttk.Scrollbar(master, command=self.output_text.yview)
         self.output_text.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.grid(row=6, column=3, sticky='n'+'s')
 
@@ -90,17 +107,15 @@ class YtdlpGUI:
 
         # 数据存储
         self.available_resolutions = []
-        self.available_subtitles = []  # 存储字幕语言信息：[(lang_code, type='normal'|'auto')]
+        self.available_subtitles = []
+        
+        self.ffmpeg_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "/opt/homebrew/bin/ffmpeg")
 
-        # ffmpeg位置设定
-        self.ffmpeg_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "ffmpeg.exe")
-
-        # 目标语言映射
-        # 仅显示这几种语言：中文简体(zh)、英语(en)、日语(ja)、俄语(ru)、德语(de)、法语(fr)
-        # 用英文名展示
         self.lang_map = {
             'en': 'English',
             'zh': 'Chinese (Simplified)',
+            'zh-CN': 'Chinese (Simplified)',
+            'zh-Hans': 'Chinese (Simplified)',
             'ja': 'Japanese',
             'ru': 'Russian',
             'de': 'German',
@@ -153,7 +168,6 @@ class YtdlpGUI:
             self.log_output(f"扫描出错: {e}\n")
 
     def on_subtitles_check(self):
-        # 当选择下载字幕时，启用扫描字幕按钮和字幕格式选择
         if self.subtitles_var.get():
             self.scan_subs_button.config(state='normal')
         else:
@@ -182,31 +196,19 @@ class YtdlpGUI:
                 subs = info.get('subtitles', {})
                 autosubs = info.get('automatic_captions', {})
 
-                self.available_subtitles = []
-                # 普通字幕
+                raw_subtitles = []
                 for lang in subs.keys():
-                    self.available_subtitles.append((lang, 'normal'))
-                # 自动字幕
+                    raw_subtitles.append((lang, 'normal'))
                 for lang in autosubs.keys():
-                    self.available_subtitles.append((lang, 'auto'))
+                    raw_subtitles.append((lang, 'auto'))
 
-                # 过滤仅保留指定语言
                 filtered_subs = []
-                for (lang, t) in self.available_subtitles:
-                    # 简体中文有时候是 zh-Hans, zh-CN等，这里只要前缀是zh就认为是简体中文
-                    # 如需更精确的判断，可根据实际情况调整。
-                    if lang == 'en' or lang == 'ja' or lang == 'ru' or lang == 'de' or lang == 'fr' or lang.startswith('zh'):
-                        # 使用映射表中的语言名
-                        display_lang = None
-                        if lang.startswith('zh'):
-                            display_lang = self.lang_map.get('zh', 'Chinese (Simplified)')
-                        else:
-                            display_lang = self.lang_map.get(lang, lang)
+                for (lang, t) in raw_subtitles:
+                    if lang in ['en', 'ja', 'ru', 'de', 'fr', 'zh', 'zh-CN', 'zh-Hans']:
+                        display_lang = self.lang_map.get(lang, lang)
                         filtered_subs.append((lang, t, display_lang))
 
                 if filtered_subs:
-                    # 显示在combobox中，如 "Chinese (Simplified) (normal)"
-                    # 或 "English (auto)"
                     sub_options = [f"{display_lang} ({t})" for (lang, t, display_lang) in filtered_subs]
                     self.subtitle_combobox['values'] = sub_options
                     self.subtitle_combobox.config(state='readonly')
@@ -237,12 +239,9 @@ class YtdlpGUI:
 
         chosen_res = self.format_var.get().strip() if self.format_var.get() else ""
         if self.audio_only_var.get():
-            # 音频模式，不加分辨率后缀
             outtmpl = '%(title)s.%(ext)s'
         else:
-            # 视频模式，加上分辨率后缀（如果有选择的分辨率）
             if chosen_res and chosen_res.endswith('p'):
-                # e.g. %(title)s.1080p.%(ext)s
                 outtmpl = '%(title)s.' + chosen_res + '.%(ext)s'
             else:
                 outtmpl = '%(title)s.%(ext)s'
@@ -253,7 +252,6 @@ class YtdlpGUI:
             'ffmpeg_location': self.ffmpeg_path,
         }
 
-        # 字幕相关逻辑
         download_sub = self.subtitles_var.get()
         chosen_sub = self.subtitle_var.get().strip() if download_sub and self.subtitle_combobox['state'] != 'disabled' else None
         chosen_sub_format = self.subformat_var.get() if (download_sub and self.subformat_combobox['state'] != 'disabled') else None
@@ -290,16 +288,10 @@ class YtdlpGUI:
             self.log_output(f"下载过程中出现错误: {e}\n")
 
     def parse_sub_choice(self, sub_choice_str):
-        # sub_choice_str类似 "Chinese (Simplified) (normal)"
-        # 我们需要从 self.available_subtitles 中找对应的语言code和类型
-        # 由于available_subtitles中存的是(lang, type, display_name)
-        # 我们已将用户看到的sub_choice_str译为 display_lang (t)
-        # 所以要反向解析：
         m = re.match(r'(.+?) \((normal|auto)\)', sub_choice_str)
         if m:
             display_lang = m.group(1)
             stype = m.group(2)
-            # 找到原始 lang code
             for (lang, t, dlang_name) in self.available_subtitles:
                 if dlang_name == display_lang and t == stype:
                     return lang, t
@@ -312,7 +304,6 @@ class YtdlpGUI:
             ydl_opts['writeautomaticsub'] = True
 
         ydl_opts['subtitleslangs'] = [lang]
-        # 转换字幕格式
         if 'postprocessors' not in ydl_opts:
             ydl_opts['postprocessors'] = []
         ydl_opts['postprocessors'].append({
@@ -351,7 +342,23 @@ class YtdlpGUI:
         self.output_text.see(tk.END)
 
 
+
 if __name__ == "__main__":
-    root = tk.Tk()
+    # 设置DPI感知和缩放，解决字体模糊问题（Windows下）
+    # 请确保在import后执行下列代码
+    if sys.platform.startswith('win'):
+        import ctypes
+        try:
+            ctypes.windll.shcore.SetProcessDpiAwareness(1)
+            ScaleFactor = ctypes.windll.shcore.GetScaleFactorForDevice(0)
+            # 通常ScaleFactor是整数，如100,125,150... 通过除以75得到合适的scaling
+            # 根据实际情况微调此值
+        except:
+            ScaleFactor = 100  # 如果获取失败则使用默认
+
+    root = ThemedTk(theme="Breeze")
+    if sys.platform.startswith('win'):
+        root.tk.call('tk', 'scaling', ScaleFactor/75)
+
     app = YtdlpGUI(root)
     root.mainloop()
