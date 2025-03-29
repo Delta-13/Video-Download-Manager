@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
 
         self.resolution_label = QLabel("分辨率:")
         self.resolution_combo = QComboBox()
-        self.resolution_combo.addItems(["720p", "1080p", "4K", "原画"])
+        self.resolution_combo.addItems(["480p", "720p", "1080p", "1440p", "2160p"])
         default_res = self.settings.value("defaultResolution", "1080p")
         index = self.resolution_combo.findText(default_res)
         if index >= 0:
