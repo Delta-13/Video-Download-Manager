@@ -4,8 +4,9 @@ import uuid
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLineEdit, QComboBox, QPushButton, QTableWidget, QTableWidgetItem,
-    QStatusBar, QFileDialog, QLabel, QAction
+    QStatusBar, QFileDialog, QLabel, QApplication
 )
+from PySide6.QtGui import QAction
 from PySide6.QtCore import QSettings
 from PySide6.QtGui import QGuiApplication
 from downloader import DownloadThread
@@ -38,7 +39,7 @@ class MainWindow(QMainWindow):
 
         self.resolution_label = QLabel("分辨率:")
         self.resolution_combo = QComboBox()
-        self.resolution_combo.addItems(["480p", "720p", "1080p", "1440p", "2160p"])
+        self.resolution_combo.addItems(["720p", "1080p", "4K", "原画"])
         default_res = self.settings.value("defaultResolution", "1080p")
         index = self.resolution_combo.findText(default_res)
         if index >= 0:
