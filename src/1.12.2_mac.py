@@ -108,8 +108,17 @@ class YtdlpGUI:
         # 数据存储
         self.available_resolutions = []
         self.available_subtitles = []
-        
-        self.ffmpeg_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "/opt/homebrew/bin/ffmpeg")
+
+        # macOS 默认 Homebrew 安装路径（Apple Silicon）
+        # 如使用 Intel Mac，可改为 "/usr/local/bin/ffmpeg"
+        self.ffmpeg_path = "/opt/homebrew/bin/ffmpeg"
+        if not os.path.exists(self.ffmpeg_path):
+            self.master.after(
+                0,
+                self.log_output,
+                f"警告：未找到 ffmpeg（{self.ffmpeg_path}），请先执行 'brew install ffmpeg'。\n"
+                "音视频合并 / 字幕转换 / MP3 转码功能将无法正常工作。\n",
+            )
 
         self.lang_map = {
             'en': 'English',

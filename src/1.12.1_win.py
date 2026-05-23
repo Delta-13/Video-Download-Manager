@@ -108,8 +108,18 @@ class YtdlpGUI:
         # 数据存储
         self.available_resolutions = []
         self.available_subtitles = []
-        
-        self.ffmpeg_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "ffmpeg.exe")
+
+        # Windows 端：在脚本所在目录查找 ffmpeg.exe
+        self.ffmpeg_path = os.path.join(
+            os.path.dirname(os.path.abspath(sys.argv[0])), "ffmpeg.exe"
+        )
+        if not os.path.exists(self.ffmpeg_path):
+            self.master.after(
+                0,
+                self.log_output,
+                f"警告：未找到 ffmpeg.exe（{self.ffmpeg_path}），请将其放到脚本同目录。\n"
+                "音视频合并 / 字幕转换 / MP3 转码功能将无法正常工作。\n",
+            )
 
         self.lang_map = {
             'en': 'English',
