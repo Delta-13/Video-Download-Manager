@@ -297,6 +297,7 @@ class YtdlpGUI:
             'outtmpl': os.path.join(out_path, outtmpl),
             'progress_hooks': [self.my_hook],
             'ffmpeg_location': self.ffmpeg_path,
+            'nooverwrites': True,       # 不静默覆盖已存在的同名文件
             **self._NETWORK_OPTS,
         }
 
