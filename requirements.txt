@@ -1,0 +1,18 @@
+# Video Download Manager - 运行时依赖
+# 适用于 src/1.12.1_win.py 与 src/1.12.2_mac.py
+#
+# 安装：
+#   pip install -r requirements.txt
+#
+# 另需在系统中安装 ffmpeg：
+#   Windows : 将 ffmpeg.exe 放置在 src/ 目录下，与脚本同级
+#   macOS   : brew install ffmpeg
+
+yt-dlp>=2024.04.09
+ttkthemes>=3.2.2
+
+# ---------------------------------------------------------------------------
+# 可选：Version-2/ 下的 PySide6 alpha 版本所需依赖（当前仍为实验性）
+# 若不使用 Version-2，可不安装。
+# ---------------------------------------------------------------------------
+# PySide6>=6.6.0
