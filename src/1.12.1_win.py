@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter import ttk
 import threading
+import time
 import os
 import re
 import sys
@@ -390,7 +391,11 @@ class YtdlpGUI:
         self.master.update_idletasks()
 
     def log_output(self, message):
-        self.output_text.insert(tk.END, message)
+        # 在每条日志前加 [HH:MM:SS] 时间戳，便于排查问题
+        # 注意：本函数不会主动打印用户输入的 URL，仅原样转发上层调用方提供的文案，
+        # 避免误把敏感信息（如带 token 的链接、cookie 等）写入日志。
+        timestamp = time.strftime("[%H:%M:%S] ")
+        self.output_text.insert(tk.END, timestamp + message)
         self.output_text.see(tk.END)
 
 
