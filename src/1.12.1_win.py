@@ -298,6 +298,8 @@ class YtdlpGUI:
             'outtmpl': os.path.join(out_path, outtmpl),
             'progress_hooks': [self.my_hook],
             'ffmpeg_location': self.ffmpeg_path,
+            'windowsfilenames': True,   # 强制使用 Windows 合法字符，避免冒号 / 问号等导致写入失败
+            'nooverwrites': True,       # 不静默覆盖已存在的同名文件
             **self._NETWORK_OPTS,
         }
 
