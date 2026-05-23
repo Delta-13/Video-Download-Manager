@@ -5,6 +5,7 @@ import threading
 import os
 import re
 import sys
+from urllib.parse import urlparse
 from yt_dlp import YoutubeDL
 from ttkthemes import ThemedTk
 
@@ -141,14 +142,25 @@ class YtdlpGUI:
         if directory:
             self.path_var.set(directory)
 
+    @staticmethod
+    def _is_valid_http_url(url):
+        # 仅接受 http(s):// 协议；拒绝空字符串、本地路径、file://、javascript: 等
+        if not url:
+            return False
+        try:
+            parsed = urlparse(url)
+        except (ValueError, TypeError):
+            return False
+        return parsed.scheme in ("http", "https") and bool(parsed.netloc)
+
     def start_scan_thread(self):
         t = threading.Thread(target=self.scan_formats)
         t.start()
 
     def scan_formats(self):
         url = self.url_entry.get().strip()
-        if not url:
-            messagebox.showerror("错误", "请输入视频URL!")
+        if not self._is_valid_http_url(url):
+            messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
 
         self.log_output("正在扫描可用格式...\n")
@@ -190,8 +202,8 @@ class YtdlpGUI:
 
     def scan_subtitles(self):
         url = self.url_entry.get().strip()
-        if not url:
-            messagebox.showerror("错误", "请输入视频URL!")
+        if not self._is_valid_http_url(url):
+            messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
 
         if not self.subtitles_var.get():
@@ -239,8 +251,8 @@ class YtdlpGUI:
         url = self.url_entry.get().strip()
         out_path = self.path_var.get().strip()
 
-        if not url:
-            messagebox.showerror("错误", "请输入视频URL!")
+        if not self._is_valid_http_url(url):
+            messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
         if not out_path:
             messagebox.showerror("错误", "请选择下载目录!")
