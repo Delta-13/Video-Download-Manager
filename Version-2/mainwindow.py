@@ -1,6 +1,7 @@
 # mainwindow.py
 import os
 import uuid
+from urllib.parse import urlparse
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLineEdit, QComboBox, QPushButton, QTableWidget, QTableWidgetItem,
@@ -11,6 +12,17 @@ from PySide6.QtCore import QSettings
 from PySide6.QtGui import QGuiApplication
 from downloader import DownloadThread
 from settingsdialog import SettingsDialog
+
+
+def _is_valid_http_url(url):
+    # 仅接受 http(s):// 协议；拒绝空字符串、本地路径、file://、javascript: 等
+    if not url:
+        return False
+    try:
+        parsed = urlparse(url)
+    except (ValueError, TypeError):
+        return False
+    return parsed.scheme in ("http", "https") and bool(parsed.netloc)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -105,19 +117,25 @@ class MainWindow(QMainWindow):
 
     def on_clipboard_change(self):
         text = self.clipboard.text().strip()
-        if text.startswith("http"):
+        if _is_valid_http_url(text):
             self.url_input.setText(text)
             self.status_bar.showMessage("检测到视频链接，正在解析...")
             # 此处可增加解析逻辑
 
     def start_download(self):
         video_url = self.url_input.text().strip()
-        if not video_url:
-            self.status_bar.showMessage("请先输入视频链接")
+        if not _is_valid_http_url(video_url):
+            self.status_bar.showMessage("请输入有效的视频链接（必须以 http:// 或 https:// 开头）")
             return
         download_path = self.path_input.text().strip()
         if not download_path:
             self.status_bar.showMessage("请先选择下载路径")
+            return
+        if not os.path.isdir(download_path):
+            self.status_bar.showMessage(f"下载路径不存在或不是目录：{download_path}")
+            return
+        if not os.access(download_path, os.W_OK):
+            self.status_bar.showMessage(f"下载路径不可写：{download_path}")
             return
         resolution = self.resolution_combo.currentText()
         subtitle = self.subtitle_combo.currentText()
