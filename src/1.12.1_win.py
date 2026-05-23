@@ -213,10 +213,9 @@ class YtdlpGUI:
             self.log_output(f"扫描出错（{type(e).__name__}）：{e}\n")
 
     def on_subtitles_check(self):
-        if self.subtitles_var.get():
-            self.scan_subs_button.config(state='normal')
-        else:
-            self.scan_subs_button.config(state='normal')
+        # 扫描字幕按钮始终启用；取消勾选时禁用语言/格式下拉
+        self.scan_subs_button.config(state='normal')
+        if not self.subtitles_var.get():
             self.subtitle_combobox.config(state='disabled')
             self.subformat_combobox.config(state='disabled')
 
