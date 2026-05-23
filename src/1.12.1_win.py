@@ -154,6 +154,19 @@ class YtdlpGUI:
             return False
         return parsed.scheme in ("http", "https") and bool(parsed.netloc)
 
+    @staticmethod
+    def _validate_output_dir(path):
+        # 校验下载目录：必须非空、存在、是目录且可写。返回 (ok, 错误信息)
+        if not path:
+            return False, "请选择下载目录!"
+        if not os.path.exists(path):
+            return False, f"下载目录不存在：{path}"
+        if not os.path.isdir(path):
+            return False, f"下载目录不是有效的目录：{path}"
+        if not os.access(path, os.W_OK):
+            return False, f"下载目录不可写（无权限）：{path}"
+        return True, ""
+
     def start_scan_thread(self):
         t = threading.Thread(target=self.scan_formats)
         t.start()
@@ -255,8 +268,9 @@ class YtdlpGUI:
         if not self._is_valid_http_url(url):
             messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
-        if not out_path:
-            messagebox.showerror("错误", "请选择下载目录!")
+        ok, err = self._validate_output_dir(out_path)
+        if not ok:
+            messagebox.showerror("错误", err)
             return
 
         chosen_res = self.format_var.get().strip() if self.format_var.get() else ""
