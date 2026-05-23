@@ -26,7 +26,11 @@
 | `src/*.py`（日志时间戳） | done | `daf6a9f` | `log_output` 加 `[HH:MM:SS]` |
 | `Version-2/mainwindow.py` | done | `54b69c7` | URL 校验 + 目录校验（存在/可写）+ 剪贴板收紧 |
 | `Version-2/downloader.py` | done | `d798648` | `socket_timeout`/`retries`/`fragment_retries`/`nooverwrites` |
-| `PLANS.md` / `CLAUDE_PROGRESS.md` | in-progress | 本提交 | 收尾文档 |
+| `PLANS.md` / `CLAUDE_PROGRESS.md` | done | `17152d4` | 初版收尾文档 |
+| `1.12.1_mac.py` → `archive/1.12.1_mac.py` | done | `e542a4f` | 补救：初次勘察遗漏的旧 mac 版本 |
+| `ffmpeg`/`ffmpeg.exe`/`ffplay.exe`/`ffprobe.exe` → `src/` | done | `035c6ab` | 补救：保持脚本同目录关系（共 ~326MB）|
+| `icon.ico`/`icon_hd.ico` → `src/` | done | `035c6ab` | 补救：spec 文件以相对路径引用 `icon_hd.ico` |
+| `PLANS.md` / `CLAUDE_PROGRESS.md` 二次更新 | in-progress | 本提交 | 记录补救变更 |
 
 ## Current assumptions
 
@@ -64,9 +68,12 @@
   - 为 Version-2 alpha 补 `DownloadError` 分类与日志时间戳，对齐 `src/` 体验。
   - 引入 pytest 单元测试覆盖 `_is_valid_http_url` 与 `_validate_output_dir`。
   - 升级 `requirements.txt` 中 yt-dlp 的下限版本。
+  - 评估 `Thumbs.db`（22KB 系统垃圾）是否要 `git rm --cached` 并加入 `.gitignore`，本次未动以遵守"无明确请求不删文件"原则。
+  - 评估根目录已跟踪的 `Version-2/__pycache__/*.pyc`（Python 字节码）是否要清掉。
 
 ## 风险与已知偏差
 
-- ffmpeg 路径已从"仓库根"改为"脚本同目录（即 `src/`）"；如用户曾在仓库根放置 `ffmpeg.exe`，需迁到 `src/` 下（README 中已注明）。
+- ffmpeg 路径已从"仓库根"改为"脚本同目录（即 `src/`）"，仓库内的 `ffmpeg.exe`/`ffplay.exe`/`ffprobe.exe`/`ffmpeg` 也已通过补救 commit `035c6ab` 同步迁入 `src/`，所以用户开箱即可用。
 - `archive/` 下脚本未做安全加固——按用户在计划阶段的明确决定（"freeze_archive" 选项），它们作为版本快照保留原状。
 - Version-2 仍为 alpha，本次仅加最小化的 URL/目录校验和网络容错，未对其 UI 流程做更深改动。
+- 初次仓库勘察因工具限制未列出 ffmpeg 二进制和 `1.12.1_mac.py`，已通过补救 commit `e542a4f`、`035c6ab` 修正；建议下次开始任务时优先使用 `git ls-files` 而不是 glob。
