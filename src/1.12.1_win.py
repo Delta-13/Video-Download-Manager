@@ -7,6 +7,7 @@ import re
 import sys
 from urllib.parse import urlparse
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 from ttkthemes import ThemedTk
 
 
@@ -206,8 +207,10 @@ class YtdlpGUI:
                 else:
                     self.log_output("未找到可用的视频分辨率格式。\n")
 
+        except DownloadError as e:
+            self.log_output(f"无法解析视频（链接不支持或网络异常）：{e}\n")
         except Exception as e:
-            self.log_output(f"扫描出错: {e}\n")
+            self.log_output(f"扫描出错（{type(e).__name__}）：{e}\n")
 
     def on_subtitles_check(self):
         if self.subtitles_var.get():
@@ -261,8 +264,10 @@ class YtdlpGUI:
                 else:
                     self.log_output("未找到指定语言的字幕。\n")
 
+        except DownloadError as e:
+            self.log_output(f"无法获取字幕信息（链接不支持或网络异常）：{e}\n")
         except Exception as e:
-            self.log_output(f"字幕扫描出错: {e}\n")
+            self.log_output(f"字幕扫描出错（{type(e).__name__}）：{e}\n")
 
     def start_download_thread(self):
         t = threading.Thread(target=self.download_video)
@@ -328,8 +333,10 @@ class YtdlpGUI:
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
+        except DownloadError as e:
+            self.log_output(f"下载失败（视频不可用、网络异常或地区限制）：{e}\n")
         except Exception as e:
-            self.log_output(f"下载过程中出现错误: {e}\n")
+            self.log_output(f"下载过程中出现错误（{type(e).__name__}）：{e}\n")
 
     def parse_sub_choice(self, sub_choice_str):
         m = re.match(r'(.+?) \((normal|auto)\)', sub_choice_str)
