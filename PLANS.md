@@ -62,7 +62,10 @@
 | Phase 3.8 `log_output` 加 `[HH:MM:SS]` 时间戳 | done | commit `daf6a9f` |
 | Phase 4.1 Version-2 `mainwindow.py` 加 URL/目录校验 | done | commit `54b69c7` |
 | Phase 4.2 Version-2 `downloader.py` 加超时/重试/防覆盖 | done | commit `d798648` |
-| Phase 5 创建 `PLANS.md` / `CLAUDE_PROGRESS.md`，最终核对未 push | in-progress | 本提交 |
+| Phase 5 创建 `PLANS.md` / `CLAUDE_PROGRESS.md` | done | commit `17152d4` |
+| 补救 A：归档遗漏的 `1.12.1_mac.py` | done | commit `e542a4f` |
+| 补救 B：把 `ffmpeg*` 二进制和 `icon*.ico` git mv 到 `src/` 避免路径回归 | done | commit `035c6ab` |
+| 补救 C：同步更新 `PLANS.md` / `CLAUDE_PROGRESS.md` | in-progress | 本提交 |
 
 ## Out of scope / 已记录但未做
 
