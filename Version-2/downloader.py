@@ -26,6 +26,12 @@ class DownloadThread(QThread):
             'noplaylist': True,           # 仅下载单个视频
             'quiet': True,
             'no_warnings': True,
+            # 网络容错：超时与重试，避免长时间挂死
+            'socket_timeout': 30,
+            'retries': 5,
+            'fragment_retries': 5,
+            # 不静默覆盖已存在的同名文件
+            'nooverwrites': True,
         }
 
         # 根据分辨率设置格式
