@@ -20,6 +20,13 @@ from ttkthemes import ThemedTk
 GLOBAL_FONT = ("SimSun", 10)
 
 class YtdlpGUI:
+    # 网络相关 yt-dlp 选项：超时与重试，防止扫描/下载长时间挂死
+    _NETWORK_OPTS = {
+        'socket_timeout': 30,
+        'retries': 5,
+        'fragment_retries': 5,
+    }
+
     def __init__(self, master):
         self.master = master
         self.master.title("Video Download Manager")
@@ -179,7 +186,7 @@ class YtdlpGUI:
         self.log_output("正在扫描可用格式...\n")
 
         try:
-            with YoutubeDL({'quiet': True, 'no_warnings': True}) as ydl:
+            with YoutubeDL({'quiet': True, 'no_warnings': True, **self._NETWORK_OPTS}) as ydl:
                 info = ydl.extract_info(url, download=False)
                 formats = info.get('formats', [])
 
@@ -225,7 +232,7 @@ class YtdlpGUI:
 
         self.log_output("正在扫描可用字幕...\n")
         try:
-            with YoutubeDL({'quiet': True, 'no_warnings': True}) as ydl:
+            with YoutubeDL({'quiet': True, 'no_warnings': True, **self._NETWORK_OPTS}) as ydl:
                 info = ydl.extract_info(url, download=False)
                 subs = info.get('subtitles', {})
                 autosubs = info.get('automatic_captions', {})
@@ -285,6 +292,7 @@ class YtdlpGUI:
             'outtmpl': os.path.join(out_path, outtmpl),
             'progress_hooks': [self.my_hook],
             'ffmpeg_location': self.ffmpeg_path,
+            **self._NETWORK_OPTS,
         }
 
         download_sub = self.subtitles_var.get()
