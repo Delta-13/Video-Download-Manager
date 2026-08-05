@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QAction
 from PySide6.QtCore import QSettings
 from PySide6.QtGui import QGuiApplication
-from downloader import DownloadThread
+from downloader import DownloadThread, find_ffmpeg_location
 from settingsdialog import SettingsDialog
 
 
@@ -137,6 +137,12 @@ class MainWindow(QMainWindow):
         if not os.access(download_path, os.W_OK):
             self.status_bar.showMessage(f"下载路径不可写：{download_path}")
             return
+        ffmpeg_location = find_ffmpeg_location()
+        if not ffmpeg_location:
+            self.status_bar.showMessage(
+                "未找到 FFmpeg：请安装并加入 PATH，或将它放入 src/ 目录后重试"
+            )
+            return
         resolution = self.resolution_combo.currentText()
         subtitle = self.subtitle_combo.currentText()
 
@@ -154,7 +160,9 @@ class MainWindow(QMainWindow):
         self.table.setItem(row, 5, QTableWidgetItem("等待下载"))
 
         # 创建下载线程并连接信号更新任务状态
-        download_thread = DownloadThread(video_url, download_path, resolution, subtitle)
+        download_thread = DownloadThread(
+            video_url, download_path, resolution, subtitle, ffmpeg_location
+        )
         download_thread.progressChanged.connect(lambda progress, speed, eta, row=row: self.update_task(row, progress, speed, eta))
         download_thread.downloadFinished.connect(lambda row=row: self.finish_task(row))
         download_thread.downloadError.connect(lambda error, row=row: self.error_task(row, error))

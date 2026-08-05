@@ -1,5 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+
+
+SPEC_DIR = SPECPATH
+
 
 a = Analysis(
     ['1.12.2_mac.py'],
@@ -32,7 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon_hd.ico'],
+    icon=[os.path.join(SPEC_DIR, 'icon_hd.ico')],
 )
 coll = COLLECT(
     exe,
@@ -46,6 +51,6 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='1.12.2_mac.app',
-    icon='icon_hd.ico',
+    icon=os.path.join(SPEC_DIR, 'icon_hd.ico'),
     bundle_identifier=None,
 )

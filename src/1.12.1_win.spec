@@ -1,10 +1,15 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+
+
+SPEC_DIR = SPECPATH
+
 
 a = Analysis(
     ['1.12.1_win.py'],
     pathex=[],
-    binaries=[],
+    binaries=[(os.path.join(SPEC_DIR, 'ffmpeg.exe'), '.')],
     datas=[],
     hiddenimports=[],
     hookspath=[],
@@ -32,7 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon_hd.ico'],
+    icon=[os.path.join(SPEC_DIR, 'icon_hd.ico')],
 )
 coll = COLLECT(
     exe,

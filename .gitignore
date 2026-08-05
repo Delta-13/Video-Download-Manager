@@ -9,6 +9,9 @@ dist/
 # macOS 的系统文件
 .DS_Store
 
+# Windows 资源管理器缓存
+Thumbs.db
+
 # Python 编译产物 / 缓存
 __pycache__/
 *.py[cod]
@@ -24,5 +27,6 @@ env/
 
 # 编辑器 / IDE 工程文件
 .vscode/
+.idea/
 *.swp
 *.swo
