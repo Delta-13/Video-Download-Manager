@@ -1,6 +1,6 @@
 # 视频下载管理器 (Video Download Manager)
 
-一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器，当前稳定版本：`src/1.12.1_win.py`（Windows）/ `src/1.12.2_mac.py`（macOS）。
+一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。当前维护的源码版本为：`src/1.12.1_win.py`（Windows）/ `src/1.12.2_mac.py`（macOS）。正式 Git tag 和 `Releases/` 中的历史安装包不一定与源码版本同步。
 
 ## 软件功能概述
 
@@ -64,6 +64,7 @@ Video-Download-Manager/
 │   ├── 1.12.1_win.py   # Windows 主程序
 │   ├── 1.12.2_mac.py   # macOS 主程序
 │   └── *.spec          # PyInstaller 打包配置
+├── tests/              # 无外部依赖的回归测试
 ├── archive/            # 历史版本快照（仅作归档保留，不再维护）
 ├── Version-2/          # 基于 PySide6 的实验性重写（alpha，开发中）
 └── Releases/           # 已发布的打包产物（Windows / macOS）
@@ -168,8 +169,16 @@ Video-Download-Manager/
 
 ## 关于 Version-2 与历史版本
 
-- [`Version-2/`](Version-2/) 是基于 PySide6 的实验性重写，目前仍是 alpha 阶段，未稳定，仅供参考。
+- [`Version-2/`](Version-2/) 是基于 PySide6 的实验性重写，目前仍是 alpha 阶段，未稳定，仅供参考。运行前请额外安装 `PySide6`；开始下载时会查找 `src/` 中的 FFmpeg 或系统 `PATH`，找不到时不会创建下载任务。
 - [`archive/`](archive/) 保留了 1.0.0 到 1.12.0 之间的全部历史版本快照，仅作归档保留，不再维护。
+
+## 验证
+
+无需额外测试依赖，可运行：
+
+```bash
+python -m unittest discover -s tests -v
+```
 
 ## 作者声明
 

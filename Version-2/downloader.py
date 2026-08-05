@@ -1,7 +1,30 @@
 # downloader.py
 import os
+from pathlib import Path
+import shutil
+import sys
 from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
+
+
+def find_ffmpeg_location():
+    """Find a bundled or PATH-provided FFmpeg executable for yt-dlp."""
+    executable = "ffmpeg.exe" if os.name == "nt" else "ffmpeg"
+    module_dir = Path(__file__).resolve().parent
+    candidates = [
+        module_dir / executable,
+        module_dir.parent / "src" / executable,
+        Path(sys.executable).resolve().parent / executable,
+    ]
+    bundle_dir = getattr(sys, "_MEIPASS", None)
+    if bundle_dir:
+        candidates.append(Path(bundle_dir) / executable)
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return str(candidate)
+    return shutil.which(executable)
+
 
 class DownloadThread(QThread):
     # 信号：进度百分比、速度字符串、剩余时间字符串
@@ -11,12 +34,13 @@ class DownloadThread(QThread):
     # 下载出错信号
     downloadError = Signal(str)
 
-    def __init__(self, video_url, download_path, resolution, subtitle, parent=None):
+    def __init__(self, video_url, download_path, resolution, subtitle, ffmpeg_location, parent=None):
         super().__init__(parent)
         self.video_url = video_url
         self.download_path = download_path
         self.resolution = resolution
         self.subtitle = subtitle
+        self.ffmpeg_location = ffmpeg_location
 
     def run(self):
         # 配置 yt-dlp 选项
@@ -32,6 +56,8 @@ class DownloadThread(QThread):
             'fragment_retries': 5,
             # 不静默覆盖已存在的同名文件
             'nooverwrites': True,
+            # 视频合并、音频提取和字幕转换均需要 FFmpeg。
+            'ffmpeg_location': self.ffmpeg_location,
         }
 
         # 根据分辨率设置格式

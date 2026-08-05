@@ -1,15 +1,16 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter import ttk
+import queue
 import threading
 import time
 import os
 import re
 import sys
-from urllib.parse import urlparse
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 from ttkthemes import ThemedTk
+from validation import is_valid_http_url, validate_output_dir
 
 
 # 定义全局字体变量
@@ -32,6 +33,7 @@ class YtdlpGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Video Download Manager")
+        self._ui_events = queue.Queue()
 
         # 全局字体设置
         self.master.option_add("*Font", GLOBAL_FONT)
@@ -146,47 +148,38 @@ class YtdlpGUI:
         master.update_idletasks()
         master.minsize(master.winfo_width(), master.winfo_height())
         master.resizable(False, False)
+        self.master.after(50, self._process_ui_events)
 
     def browse_path(self):
         directory = filedialog.askdirectory()
         if directory:
             self.path_var.set(directory)
 
-    @staticmethod
-    def _is_valid_http_url(url):
-        # 仅接受 http(s):// 协议；拒绝空字符串、本地路径、file://、javascript: 等
-        if not url:
-            return False
-        try:
-            parsed = urlparse(url)
-        except (ValueError, TypeError):
-            return False
-        return parsed.scheme in ("http", "https") and bool(parsed.netloc)
-
-    @staticmethod
-    def _validate_output_dir(path):
-        # 校验下载目录：必须非空、存在、是目录且可写。返回 (ok, 错误信息)
-        if not path:
-            return False, "请选择下载目录!"
-        if not os.path.exists(path):
-            return False, f"下载目录不存在：{path}"
-        if not os.path.isdir(path):
-            return False, f"下载目录不是有效的目录：{path}"
-        if not os.access(path, os.W_OK):
-            return False, f"下载目录不可写（无权限）：{path}"
-        return True, ""
-
     def start_scan_thread(self):
-        t = threading.Thread(target=self.scan_formats)
-        t.start()
-
-    def scan_formats(self):
         url = self.url_entry.get().strip()
-        if not self._is_valid_http_url(url):
+        if not is_valid_http_url(url):
             messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
+        self._start_worker(self.scan_formats, url)
 
-        self.log_output("正在扫描可用格式...\n")
+    def _start_worker(self, target, *args):
+        threading.Thread(target=target, args=args, daemon=True).start()
+
+    def _post_ui(self, callback, *args):
+        """Queue UI work so that only Tk's main thread touches widgets."""
+        self._ui_events.put((callback, args))
+
+    def _process_ui_events(self):
+        try:
+            while True:
+                callback, args = self._ui_events.get_nowait()
+                callback(*args)
+        except queue.Empty:
+            pass
+        self.master.after(50, self._process_ui_events)
+
+    def scan_formats(self, url):
+        self._post_ui(self.log_output, "正在扫描可用格式...\n")
 
         try:
             with YoutubeDL({'quiet': True, 'no_warnings': True, **self._NETWORK_OPTS}) as ydl:
@@ -198,20 +191,23 @@ class YtdlpGUI:
                     if f.get('vcodec', 'none') != 'none' and f.get('height'):
                         resolution_set.add(f['height'])
 
-                self.available_resolutions = sorted(list(resolution_set))
-                res_options = [f"{h}p" for h in self.available_resolutions]
+                res_options = [f"{h}p" for h in sorted(resolution_set)]
 
                 if res_options:
-                    self.format_combobox['values'] = res_options
-                    self.format_var.set(res_options[0])
-                    self.log_output("扫描完成，请选择分辨率。\n")
+                    self._post_ui(self._apply_format_scan_results, res_options)
                 else:
-                    self.log_output("未找到可用的视频分辨率格式。\n")
+                    self._post_ui(self.log_output, "未找到可用的视频分辨率格式。\n")
 
         except DownloadError as e:
-            self.log_output(f"无法解析视频（链接不支持或网络异常）：{e}\n")
+            self._post_ui(self.log_output, f"无法解析视频（链接不支持或网络异常）：{e}\n")
         except Exception as e:
-            self.log_output(f"扫描出错（{type(e).__name__}）：{e}\n")
+            self._post_ui(self.log_output, f"扫描出错（{type(e).__name__}）：{e}\n")
+
+    def _apply_format_scan_results(self, res_options):
+        self.available_resolutions = [int(option[:-1]) for option in res_options]
+        self.format_combobox['values'] = res_options
+        self.format_var.set(res_options[0])
+        self.log_output("扫描完成，请选择分辨率。\n")
 
     def on_subtitles_check(self):
         # 扫描字幕按钮始终启用；取消勾选时禁用语言/格式下拉
@@ -221,20 +217,17 @@ class YtdlpGUI:
             self.subformat_combobox.config(state='disabled')
 
     def start_sub_scan_thread(self):
-        t = threading.Thread(target=self.scan_subtitles)
-        t.start()
-
-    def scan_subtitles(self):
         url = self.url_entry.get().strip()
-        if not self._is_valid_http_url(url):
+        if not is_valid_http_url(url):
             messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
-
         if not self.subtitles_var.get():
             self.log_output("请先勾选下载字幕选项。\n")
             return
+        self._start_worker(self.scan_subtitles, url)
 
-        self.log_output("正在扫描可用字幕...\n")
+    def scan_subtitles(self, url):
+        self._post_ui(self.log_output, "正在扫描可用字幕...\n")
         try:
             with YoutubeDL({'quiet': True, 'no_warnings': True, **self._NETWORK_OPTS}) as ydl:
                 info = ydl.extract_info(url, download=False)
@@ -254,39 +247,58 @@ class YtdlpGUI:
                         filtered_subs.append((lang, t, display_lang))
 
                 if filtered_subs:
-                    sub_options = [f"{display_lang} ({t})" for (lang, t, display_lang) in filtered_subs]
-                    self.subtitle_combobox['values'] = sub_options
-                    self.subtitle_combobox.config(state='readonly')
-                    self.subtitle_combobox.set(sub_options[0])
-                    self.subformat_combobox.config(state='readonly')
-                    self.available_subtitles = filtered_subs
-                    self.log_output("字幕扫描完成，请选择字幕语言和格式。\n")
+                    self._post_ui(self._apply_subtitle_scan_results, filtered_subs)
                 else:
-                    self.log_output("未找到指定语言的字幕。\n")
+                    self._post_ui(self.log_output, "未找到指定语言的字幕。\n")
 
         except DownloadError as e:
-            self.log_output(f"无法获取字幕信息（链接不支持或网络异常）：{e}\n")
+            self._post_ui(self.log_output, f"无法获取字幕信息（链接不支持或网络异常）：{e}\n")
         except Exception as e:
-            self.log_output(f"字幕扫描出错（{type(e).__name__}）：{e}\n")
+            self._post_ui(self.log_output, f"字幕扫描出错（{type(e).__name__}）：{e}\n")
+
+    def _apply_subtitle_scan_results(self, filtered_subs):
+        sub_options = [f"{display_lang} ({t})" for (lang, t, display_lang) in filtered_subs]
+        self.subtitle_combobox['values'] = sub_options
+        self.subtitle_combobox.config(state='readonly')
+        self.subtitle_combobox.set(sub_options[0])
+        self.subformat_combobox.config(state='readonly')
+        self.available_subtitles = filtered_subs
+        self.log_output("字幕扫描完成，请选择字幕语言和格式。\n")
 
     def start_download_thread(self):
-        t = threading.Thread(target=self.download_video)
-        t.start()
-
-    def download_video(self):
         url = self.url_entry.get().strip()
         out_path = self.path_var.get().strip()
 
-        if not self._is_valid_http_url(url):
+        if not is_valid_http_url(url):
             messagebox.showerror("错误", "请输入有效的视频URL（必须以 http:// 或 https:// 开头）！")
             return
-        ok, err = self._validate_output_dir(out_path)
+        ok, err = validate_output_dir(out_path)
         if not ok:
             messagebox.showerror("错误", err)
             return
 
         chosen_res = self.format_var.get().strip() if self.format_var.get() else ""
-        if self.audio_only_var.get():
+        audio_only = self.audio_only_var.get()
+        download_sub = self.subtitles_var.get()
+        chosen_sub = self.subtitle_var.get().strip() if download_sub and self.subtitle_combobox['state'] != 'disabled' else None
+        chosen_sub_format = self.subformat_var.get() if (download_sub and self.subformat_combobox['state'] != 'disabled') else None
+        subtitle_lang, subtitle_type = self.parse_sub_choice(chosen_sub) if chosen_sub else (None, None)
+
+        self._start_worker(
+            self.download_video,
+            url,
+            out_path,
+            chosen_res,
+            audio_only,
+            download_sub,
+            subtitle_lang,
+            subtitle_type,
+            chosen_sub_format,
+        )
+
+    def download_video(self, url, out_path, chosen_res, audio_only, download_sub,
+                       subtitle_lang, subtitle_type, chosen_sub_format):
+        if audio_only:
             outtmpl = '%(title)s.%(ext)s'
         else:
             if chosen_res and chosen_res.endswith('p'):
@@ -303,20 +315,15 @@ class YtdlpGUI:
             **self._NETWORK_OPTS,
         }
 
-        download_sub = self.subtitles_var.get()
-        chosen_sub = self.subtitle_var.get().strip() if download_sub and self.subtitle_combobox['state'] != 'disabled' else None
-        chosen_sub_format = self.subformat_var.get() if (download_sub and self.subformat_combobox['state'] != 'disabled') else None
-
-        if self.audio_only_var.get():
+        if audio_only:
             ydl_opts['format'] = 'bestaudio/best'
             ydl_opts['postprocessors'] = [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }]
-            if download_sub and chosen_sub:
-                lang, stype = self.parse_sub_choice(chosen_sub)
-                self.set_subtitle_opts(ydl_opts, lang, stype, chosen_sub_format)
+            if download_sub and subtitle_lang:
+                self.set_subtitle_opts(ydl_opts, subtitle_lang, subtitle_type, chosen_sub_format)
         else:
             if chosen_res and chosen_res.endswith('p'):
                 height = chosen_res.replace('p', '')
@@ -325,20 +332,19 @@ class YtdlpGUI:
                 ydl_opts['format'] = 'bestvideo+bestaudio/best'
             ydl_opts['merge_output_format'] = 'mp4'
 
-            if download_sub and chosen_sub:
-                lang, stype = self.parse_sub_choice(chosen_sub)
-                self.set_subtitle_opts(ydl_opts, lang, stype, chosen_sub_format)
+            if download_sub and subtitle_lang:
+                self.set_subtitle_opts(ydl_opts, subtitle_lang, subtitle_type, chosen_sub_format)
 
-        self.log_output("开始下载...\n")
-        self.set_progress(0)
+        self._post_ui(self.log_output, "开始下载...\n")
+        self._post_ui(self.set_progress, 0)
 
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
         except DownloadError as e:
-            self.log_output(f"下载失败（视频不可用、网络异常或地区限制）：{e}\n")
+            self._post_ui(self.log_output, f"下载失败（视频不可用、网络异常或地区限制）：{e}\n")
         except Exception as e:
-            self.log_output(f"下载过程中出现错误（{type(e).__name__}）：{e}\n")
+            self._post_ui(self.log_output, f"下载过程中出现错误（{type(e).__name__}）：{e}\n")
 
     def parse_sub_choice(self, sub_choice_str):
         m = re.match(r'(.+?) \((normal|auto)\)', sub_choice_str)
@@ -376,15 +382,15 @@ class YtdlpGUI:
             total = d.get('total_bytes', 0) or d.get('total_bytes_estimated', 0)
             if total > 0:
                 percent = downloaded / total * 100
-                self.master.after(0, self.set_progress, percent)
+                self._post_ui(self.set_progress, percent)
         elif d['status'] == 'finished':
             filename = d.get('filename')
             if filename and os.path.exists(filename):
                 size_bytes = os.path.getsize(filename)
                 size_mb = size_bytes / (1024*1024)
-                self.master.after(0, self.log_output, "下载完成！\n")
-                self.master.after(0, self.log_output, f"文件路径：{filename}\n文件大小：{size_mb:.2f} MB\n")
-            self.master.after(0, self.set_progress, 100)
+                self._post_ui(self.log_output, "下载完成！\n")
+                self._post_ui(self.log_output, f"文件路径：{filename}\n文件大小：{size_mb:.2f} MB\n")
+            self._post_ui(self.set_progress, 100)
 
     def set_progress(self, value):
         self.progress['value'] = value

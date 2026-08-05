@@ -56,24 +56,20 @@
 
 ## Verification
 
-- 每个 `src/` / `Version-2/` 代码改动均通过 `python -m py_compile` 语法自检。
+- 2026-05 的维护批次中，每个 `src/` / `Version-2/` 代码改动均通过 `python -m py_compile` 语法自检；该批次未执行 push。此处不再记录会随推送变化的 ahead 数量。
 - 每个 commit 前都用 `git diff --stat` 和 `git status` 确认仅目标文件被改、无非预期文件混入、`Releases/` 未动。
-- **未执行** `git push`，分支 `main` 比 `origin/main` 领先 15 个本地 commit。
-- 仓库无 lint/test 套件可运行；如需引入 pytest/ruff，请单独立项（CLAUDE.md 要求若无 test/lint，需在本文件说明，此处已说明）。
+- 2026-08 新增标准库 `unittest` 回归测试，覆盖 URL 与下载目录校验；运行命令为 `python -m unittest discover -s tests -v`。
 
 ## Remaining work
 
 - 无剩余 todos。如后续需要：
   - 把 `src/` 中重复的 win/mac 共用代码提取为模块（需评估单文件分发的便利性 vs DRY 收益）。
   - 为 Version-2 alpha 补 `DownloadError` 分类与日志时间戳，对齐 `src/` 体验。
-  - 引入 pytest 单元测试覆盖 `_is_valid_http_url` 与 `_validate_output_dir`。
   - 升级 `requirements.txt` 中 yt-dlp 的下限版本。
-  - 评估 `Thumbs.db`（22KB 系统垃圾）是否要 `git rm --cached` 并加入 `.gitignore`，本次未动以遵守"无明确请求不删文件"原则。
-  - 评估根目录已跟踪的 `Version-2/__pycache__/*.pyc`（Python 字节码）是否要清掉。
 
 ## 风险与已知偏差
 
 - ffmpeg 路径已从"仓库根"改为"脚本同目录（即 `src/`）"，仓库内的 `ffmpeg.exe`/`ffplay.exe`/`ffprobe.exe`/`ffmpeg` 也已通过补救 commit `035c6ab` 同步迁入 `src/`，所以用户开箱即可用。
 - `archive/` 下脚本未做安全加固——按用户在计划阶段的明确决定（"freeze_archive" 选项），它们作为版本快照保留原状。
-- Version-2 仍为 alpha，本次仅加最小化的 URL/目录校验和网络容错，未对其 UI 流程做更深改动。
+- Version-2 仍为 alpha；除 URL/目录校验和网络容错外，下载前现会校验可用的 FFmpeg 路径。
 - 初次仓库勘察因工具限制未列出 ffmpeg 二进制和 `1.12.1_mac.py`，已通过补救 commit `e542a4f`、`035c6ab` 修正；建议下次开始任务时优先使用 `git ls-files` 而不是 glob。

@@ -1,0 +1,9 @@
+# Keep new distributable artifacts and bundled third-party binaries out of
+# normal Git history. Existing history is intentionally not rewritten.
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.dmg filter=lfs diff=lfs merge=lfs -text
+Releases/** filter=lfs diff=lfs merge=lfs -text
+src/ffmpeg filter=lfs diff=lfs merge=lfs -text
+src/ffplay filter=lfs diff=lfs merge=lfs -text
+src/ffprobe filter=lfs diff=lfs merge=lfs -text
