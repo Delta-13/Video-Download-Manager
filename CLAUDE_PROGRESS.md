@@ -13,6 +13,8 @@
 
 新版本采用用户指定 `frontend-design` 工业方向；玻璃限定局部面板，文字/边界对比度有自动计算检查。没有修改旧应用或历史安装包。实际执行与未执行的验收项分别记录于 `docs/verification-v2.md`。
 
+2026-09-22 补充：用户提供的 Pornhub 链接通过真实应用适配器完成解析、完整下载与 ffprobe 校验（未使用 Cookies）。新增需显式传入 URL 的公网验收测试，结果及选择的画质见验收报告；发布二进制保持不变。
+
 ## File status
 
 | File | Status | Commit | Notes |

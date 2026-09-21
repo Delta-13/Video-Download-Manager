@@ -53,9 +53,21 @@
 | YouTube | 锁定版本含解析器；公开 Big Buck Bunny 视频元数据解析通过 | 未执行完整公网站点媒体下载 |
 | Instagram | 锁定版本含解析器 | 未提供可访问的单条验收 URL/Cookies，未实测解析与下载；不承诺账号主页整页下载 |
 | X | 锁定版本含 Twitter/X 解析器 | 未提供验收 URL，未实测解析与下载 |
-| Pornhub | 锁定版本含解析器 | 未提供验收 URL，未实测解析与下载 |
+| Pornhub | 用户提供的 `cn.pornhub.com` 单条链接已通过实际解析和完整下载；4 个画质档位，无 Cookies | 此结果仅覆盖本次链接和当前网络环境 |
 
 证据：`artifacts/site-checks.json`，可运行 `python scripts/check_sites.py` 重查公开元数据。没有把未测试情况归类为上游故障或应用故障。登录、地区、限流和上游变化需针对具体链接分别判断。
+
+### 用户链接补充验收
+
+2026-09-22，使用锁定的 yt-dlp 2026.08.19，通过应用真实 `VideoRunner` / `DownloadController` 执行用户提供的 Pornhub 链接。未提供或导入 Cookies，未改变安装包或下载引擎。
+
+- 解析成功：240p、480p、720p、1080p 共 4 个格式，返回真实标题。
+- 本次测试设定最高 360p，实际选择可用的 240p；最终为 426×240 H.264 视频 + AAC 音频，时长 291.633333 秒。
+- 完整下载 13,731,409 字节；SHA-256：`bddce4025a1258110308fa761fb0f23d0f603effa176c66d9f019275b21b3568`。
+- 观察到排队、解析、下载、后处理和完成；最终文件通过 ffprobe 校验，退出后没有残留测试引擎进程。
+- 证据：`artifacts/live-video-result.json` 与 `artifacts/live-video-test.log`；不在源码或报告中保存用户 URL、媒体标题或账号信息。
+
+新增可选的 `desktop/integration_test/live_video_test.dart`。仅在显式传入 `--dart-define=VDM_TEST_URL=...` 时执行；默认跳过，不让普通 CI 自动访问公网站点。源码 ZIP 随本次记录更新，安装包无需变更。
 
 ## 尚待目标环境验收
 

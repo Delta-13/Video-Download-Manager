@@ -31,6 +31,21 @@ def main():
             'network/certificate/site rejection; no media was downloaded')
     except subprocess.TimeoutExpired:
         report['sites']['YouTube']['publicMetadataProbe'] = 'timeout'
+    # Preserve separately executed, user-authorized download evidence. Extractor
+    # registration and this metadata-only probe cannot establish download success.
+    live_path = OUT.with_name('live-video-result.json')
+    if live_path.exists():
+        live = json.loads(live_path.read_text('utf-8'))
+        if live.get('engines', {}).get('yt-dlp') == report['ytDlpVersion']:
+            domains = {'YouTube': ['youtube.com', 'youtu.be'], 'Instagram': ['instagram.com'],
+                       'X': ['x.com', 'twitter.com'], 'Pornhub': ['pornhub.com']}
+            host = live.get('host', '').lower()
+            for site, suffixes in domains.items():
+                if any(host == d or host.endswith('.' + d) for d in suffixes):
+                    report['sites'][site].update(liveDownload=live['download'],
+                        metadata=live['metadata'], evidence=live_path.name,
+                        reason='See user-authorized application adapter acceptance result.',
+                        checkedAt=live['checkedAt'])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(report, indent=2))
