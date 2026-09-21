@@ -1,5 +1,20 @@
 # PLANS.md
 
+## 2026-09 · 用户批准的 2.0 Flutter 实施
+
+本次范围：新增 `desktop/`、`browser-extension/`、`scripts/`、`docs/` 和 Windows CI；更新根文档及忽略规则。沿用下方历史维护记录，新的产品行为和必要依赖以本次用户批准计划为准。
+
+| Task | Status | Notes |
+|---|---|---|
+| Windows 工具链、固定引擎/字体来源与 SHA-256 | done | Flutter 3.47.5；锁定清单及运行时校验 |
+| Flutter 双主题、任务模型、SQLite / Riverpod | done | SVG / 字体本地打包 |
+| 视频 / 文件 / Torrent 下载闭环 | done | 真实引擎、本地数据校验 |
+| Cookies / 托盘 / 计划 / 浏览器扩展 | done | Windows 原生桥接及扩展协议测试 |
+| 回归测试、打包及独立运行检查 | done | 已执行范围与待验收项见 docs/verification-v2.md |
+| 源码审查与本地提交 | done | 本地提交，不推送远端 |
+
+保持 `src/`、`archive/`、`Version-2/`、`Releases/` 字节级不变。
+
 ## Goal
 
 在不破坏既有用户行为的前提下：

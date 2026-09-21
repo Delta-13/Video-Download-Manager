@@ -1,5 +1,18 @@
 # CLAUDE_PROGRESS.md
 
+## 2026-09 · Flutter 2.0 实施进度
+
+用户明确批准新增独立 Flutter 应用及内置下载引擎；下方历史批次的“无新依赖/不改 GUI”仅适用于旧维护批次。
+
+| File | Status | Commit | Notes |
+|---|---|---|---|
+| `desktop/` | done | 本批次 | Flutter / Riverpod / SQLite、工业双主题、下载适配器、Windows 原生桥接 |
+| `browser-extension/` | done | 本批次 | MV3、Native Messaging、两阶段交接与恢复 |
+| `scripts/` / Windows CI | done | 本批次 | 固定工具链、SHA 清单、安装包/ZIP及测试；CI 尚未远端运行 |
+| `docs/` / 根文档 | done | 本批次 | 使用说明及逐项验收证据 |
+
+新版本采用用户指定 `frontend-design` 工业方向；玻璃限定局部面板，文字/边界对比度有自动计算检查。没有修改旧应用或历史安装包。实际执行与未执行的验收项分别记录于 `docs/verification-v2.md`。
+
 ## File status
 
 | File | Status | Commit | Notes |

@@ -1,6 +1,34 @@
 # 视频下载管理器 (Video Download Manager)
 
-一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。当前维护的源码版本为：`src/1.12.1_win.py`（Windows）/ `src/1.12.2_mac.py`（macOS）。正式 Git tag 和 `Releases/` 中的历史安装包不一定与源码版本同步。
+## 2.0.0 · Flutter Windows 版
+
+新版位于独立的 `desktop/` 工程：Flutter / Riverpod / SQLite 界面与队列，内置 yt-dlp、aria2、FFmpeg 和 Deno。采用 Motrix 风格的任务管理布局、工业毛玻璃双主题、本地 SVG 图标与等宽字体。
+
+- 视频网页、HTTP 多连接、Torrent / 磁力文件选择；批量解析、音轨/字幕、MP3、暂停恢复与重名保护。
+- 托盘后台、单次/每日/每周计划；DPAPI 加密的可选 Cookies；Chrome / Edge Manifest V3 扩展。
+- 安装包与便携 ZIP 由 `scripts/build.ps1` 生成到 `artifacts/`，无需目标电脑安装 Python、Flutter 或 Motrix。首发 Windows 10/11 x64，未签名。
+
+[使用与扩展安装说明](docs/VDM-2-User-Guide.md) · [实际验收结果及限制](docs/verification-v2.md) · [引擎来源与 SHA-256](desktop/assets.lock.json)
+
+### 构建新版
+
+构建机需要 Windows x64、Visual Studio 2022 的“使用 C++ 的桌面开发”、Windows SDK，以及 Python 3 和 Node.js（仅构建/测试使用）。
+
+```powershell
+./scripts/setup-flutter.ps1
+./scripts/setup-inno.ps1
+./scripts/build.ps1
+cd desktop
+../.tools/flutter/bin/flutter.bat test integration_test/downloads_test.dart -d windows --no-pub
+```
+
+SDK 固定为 Flutter 3.47.5；Dart 依赖由 `desktop/pubspec.lock` 锁定。首次构建按清单下载并校验引擎/字体。只有维护者主动执行 `python scripts/bootstrap_assets.py --refresh` 才更新引擎清单。测试夹具在本机生成，不依赖真实账号。
+
+`src/` Python 稳定版、`Version-2/` PySide6 实验版和 `Releases/` 历史安装包继续保留。以下为 Python 稳定版说明。
+
+## Python 稳定版
+
+基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。源码版本为：`src/1.12.1_win.py`（Windows）/ `src/1.12.2_mac.py`（macOS）。正式 Git tag 和 `Releases/` 中的历史安装包不一定与源码版本同步。
 
 ## 软件功能概述
 

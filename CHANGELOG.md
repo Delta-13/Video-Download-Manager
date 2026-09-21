@@ -1,5 +1,14 @@
 # 更新日志 (Changelog)
 
+## [2.0.0] - 2026-09-22
+
+- 新增独立 Flutter Windows x64 工程，保留 Python 稳定版、PySide6 实验版及历史安装包。
+- 内置经 SHA-256 校验的 yt-dlp / aria2 / FFmpeg / Deno；视频、文件、Torrent 统一队列与 SQLite 持久化。
+- 新增双主题工业毛玻璃界面、本地 SVG、等宽字体、搜索多选、视频规格/字幕/MP3、批量解析、计划与托盘。
+- Windows Job Objects 管理进程树，DPAPI 保护 Cookies，原子发布文件并避免覆盖。
+- 新增 Manifest V3 扩展与 Native Messaging 协议，默认关闭下载接管，失败恢复浏览器下载。
+- 提供可复现构建脚本、便携 ZIP、未签名安装包及本地真实引擎集成测试；完整验证范围见 `docs/verification-v2.md`。
+
 ## [1.0.0] - 2024-12-10 (Release)
 
 ### Added
