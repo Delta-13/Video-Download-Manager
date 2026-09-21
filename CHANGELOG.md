@@ -2,6 +2,8 @@
 
 ## [2.0.0] - 2026-09-22
 
+- 公网验收补充：用户提供的 YouTube 与 Pornhub 链接通过真实解析/完整下载；修复 YouTube 画质列表误包含 storyboard 预览图尺寸的问题。
+
 - 新增独立 Flutter Windows x64 工程，保留 Python 稳定版、PySide6 实验版及历史安装包。
 - 内置经 SHA-256 校验的 yt-dlp / aria2 / FFmpeg / Deno；视频、文件、Torrent 统一队列与 SQLite 持久化。
 - 新增双主题工业毛玻璃界面、本地 SVG、等宽字体、搜索多选、视频规格/字幕/MP3、批量解析、计划与托盘。

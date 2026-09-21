@@ -41,6 +41,32 @@ void main() {
     expect(safeName('a' * 300).length, lessThanOrEqualTo(160));
   });
   test(
+    'YouTube storyboards and audio do not become selectable video qualities',
+    () {
+      final info = VideoInfo({
+        'formats': <Map<String, dynamic>>[
+          {
+            'format_id': 'sb3',
+            'height': 27,
+            'vcodec': 'none',
+            'protocol': 'mhtml',
+          },
+          {'format_id': 'sb0', 'height': 180, 'protocol': 'mhtml'},
+          {'format_id': '140', 'vcodec': 'none', 'acodec': 'mp4a.40.2'},
+          {'format_id': '134', 'height': 360, 'vcodec': 'avc1.4d401e'},
+          {'format_id': '396', 'height': 360, 'vcodec': 'av01.0.01M.08'},
+          {'format_id': '399', 'height': 1080, 'vcodec': 'av01.0.09M.08'},
+        ],
+      });
+      expect(info.videoHeights, [1080, 360]);
+      expect(info.videoFormats.map((format) => format['format_id']), [
+        '134',
+        '396',
+        '399',
+      ]);
+    },
+  );
+  test(
     'SQLite round trip preserves resumable tasks and protected settings',
     () {
       final store = TaskStore(':memory:');

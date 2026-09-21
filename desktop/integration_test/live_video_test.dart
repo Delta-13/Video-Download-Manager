@@ -63,15 +63,9 @@ void main() {
             .timeout(const Duration(seconds: 100));
         report['metadata'] = 'passed';
         report['formatCount'] = info.formats.length;
+        report['videoFormatCount'] = info.videoFormats.length;
         report['hasTitle'] = info.title.isNotEmpty;
-        report['heights'] =
-            (info.formats
-                .map((f) => f['height'])
-                .whereType<num>()
-                .map((n) => n.toInt())
-                .toSet()
-                .toList()
-              ..sort());
+        report['heights'] = info.videoHeights;
         final task = await controller.add(
           source,
           DownloadOptions(directory: outputs.path, height: 360),

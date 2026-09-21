@@ -136,15 +136,7 @@ class _NewTaskDialogState extends State<NewTaskDialog> {
   Widget build(BuildContext context) {
     final c = Palette.of(context);
     final info = results.length == 1 ? results.first.info : null;
-    final heights =
-        info?.formats
-            .map((f) => f['height'])
-            .whereType<num>()
-            .map((n) => n.toInt())
-            .toSet()
-            .toList() ??
-        <int>[];
-    heights.sort((a, b) => b.compareTo(a));
+    final heights = info?.videoHeights ?? <int>[];
     final languages =
         info?.formats
             .map((f) => f['language'])
@@ -153,10 +145,7 @@ class _NewTaskDialogState extends State<NewTaskDialog> {
             .toList() ??
         <String>[];
     final formats =
-        info?.formats
-            .where((f) => f['vcodec'] != 'none' && f['format_id'] != null)
-            .toList() ??
-        [];
+        info?.videoFormats.where((f) => f['format_id'] != null).toList() ?? [];
     return Dialog(
       child: SizedBox(
         width: 760,

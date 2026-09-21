@@ -18,7 +18,7 @@
 | 检查 | 结果与证据 |
 |---|---|
 | Flutter 静态检查 | `flutter analyze --no-pub`，无问题 |
-| Flutter 单元/组件测试 | 16 项通过：输入、Windows 文件名、SQLite、计划边界、引擎参数、进度、脱敏、对比度、双主题、文字缩放、窄窗口与新建流程 |
+| Flutter 单元/组件测试 | 17 项通过：输入、Windows 文件名、SQLite、计划边界、引擎参数、进度、脱敏、对比度、双主题、文字缩放、窄窗口、新建流程与 YouTube 画质过滤 |
 | Chrome/Edge 交接协议单元测试 | 4 项通过：POST/blob/未知请求拒绝、确认后取消浏览器任务、准备/提交失败恢复 |
 | Python 稳定版回归 | 5 项通过；旧应用源码未改动 |
 | Windows 原生集成 | `integration_test/downloads_test.dart` 通过；真实运行内置 yt-dlp、aria2、FFmpeg，使用本地生成的数据与媒体 |
@@ -50,7 +50,7 @@
 
 | 站点 | 本次证据 | 未完成项 |
 |---|---|---|
-| YouTube | 锁定版本含解析器；公开 Big Buck Bunny 视频元数据解析通过 | 未执行完整公网站点媒体下载 |
+| YouTube | 用户提供的链接已通过应用真实解析、完整下载与音视频合并；无需 Cookies，实际视频档位最高 1080p | 此结果仅覆盖本次链接和当前网络环境 |
 | Instagram | 锁定版本含解析器 | 未提供可访问的单条验收 URL/Cookies，未实测解析与下载；不承诺账号主页整页下载 |
 | X | 锁定版本含 Twitter/X 解析器 | 未提供验收 URL，未实测解析与下载 |
 | Pornhub | 用户提供的 `cn.pornhub.com` 单条链接已通过实际解析和完整下载；4 个画质档位，无 Cookies | 此结果仅覆盖本次链接和当前网络环境 |
@@ -67,7 +67,18 @@
 - 观察到排队、解析、下载、后处理和完成；最终文件通过 ffprobe 校验，退出后没有残留测试引擎进程。
 - 证据：`artifacts/live-video-result.json` 与 `artifacts/live-video-test.log`；不在源码或报告中保存用户 URL、媒体标题或账号信息。
 
-新增可选的 `desktop/integration_test/live_video_test.dart`。仅在显式传入 `--dart-define=VDM_TEST_URL=...` 时执行；默认跳过，不让普通 CI 自动访问公网站点。源码 ZIP 随本次记录更新，安装包无需变更。
+新增可选的 `desktop/integration_test/live_video_test.dart`。仅在显式传入 `--dart-define=VDM_TEST_URL=...` 时执行；默认跳过，不让普通 CI 自动访问公网站点。上述 Pornhub 验收未改变下载引擎或安装包。
+
+### YouTube 用户链接补充验收
+
+2026-09-22，使用相同的真实应用适配器和锁定引擎，对用户提供的 YouTube 单条链接完成解析、完整下载、合并与 ffprobe 检查。没有导入 Cookies。
+
+- 元数据包含 47 个条目：31 个视频格式、12 个音频格式和 4 个 storyboard 缩略图格式。真实视频画质为 144p、240p、360p、480p、720p、1080p。
+- 本次实际下载 640×360 AV1 视频 + Opus 音频，时长 500.161 秒，文件 24,376,849 字节（约 23.2 MiB）。
+- SHA-256：`051f7716853707976b32bbda754f8e389b0e35724a56ff317e9e090ff3a7e07a`；观察到排队、解析、下载、合并和完成；退出后无残留引擎进程。
+- 证据：`artifacts/youtube/live-video-result.json`、`artifacts/youtube/format-check.json`、`artifacts/youtube-test.log`。原始验收报告的 `heights` 来自所有格式，包含预览图尺寸；实际视频画质以格式复核结果和修复后的 `VideoInfo.videoHeights` 为准。
+- 本次发现并修复画质列表混入 27p/45p/90p/180p storyboard 尺寸的问题；选择器现在排除 mhtml 预览图与纯音频，新增回归测试。安装包、便携 ZIP 与源码包均重新生成，引擎版本保持不变。
+- 站点检查脚本汇总各站点独立保存的验收记录，不覆盖此前的 Pornhub 测试证据。
 
 ## 尚待目标环境验收
 

@@ -33,8 +33,11 @@ def main():
         report['sites']['YouTube']['publicMetadataProbe'] = 'timeout'
     # Preserve separately executed, user-authorized download evidence. Extractor
     # registration and this metadata-only probe cannot establish download success.
-    live_path = OUT.with_name('live-video-result.json')
-    if live_path.exists():
+    live_paths = [OUT.with_name('live-video-result.json'),
+                  *sorted(OUT.parent.glob('*/live-video-result.json'))]
+    for live_path in live_paths:
+        if not live_path.exists():
+            continue
         live = json.loads(live_path.read_text('utf-8'))
         if live.get('engines', {}).get('yt-dlp') == report['ytDlpVersion']:
             domains = {'YouTube': ['youtube.com', 'youtu.be'], 'Instagram': ['instagram.com'],
@@ -43,7 +46,7 @@ def main():
             for site, suffixes in domains.items():
                 if any(host == d or host.endswith('.' + d) for d in suffixes):
                     report['sites'][site].update(liveDownload=live['download'],
-                        metadata=live['metadata'], evidence=live_path.name,
+                        metadata=live['metadata'], evidence=live_path.relative_to(OUT.parent).as_posix(),
                         reason='See user-authorized application adapter acceptance result.',
                         checkedAt=live['checkedAt'])
     OUT.parent.mkdir(parents=True, exist_ok=True)

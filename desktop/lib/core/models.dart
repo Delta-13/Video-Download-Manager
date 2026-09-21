@@ -263,6 +263,21 @@ class VideoInfo {
   List<Map<String, dynamic>> get formats => (raw['formats'] as List? ?? [])
       .whereType<Map<String, dynamic>>()
       .toList();
+  // yt-dlp includes YouTube storyboard images in its formats array.
+  List<Map<String, dynamic>> get videoFormats => formats
+      .where(
+        (format) => format['vcodec'] != 'none' && format['protocol'] != 'mhtml',
+      )
+      .toList();
+  List<int> get videoHeights =>
+      (videoFormats
+          .map((format) => format['height'])
+          .whereType<num>()
+          .map((height) => height.toInt())
+          .where((height) => height > 0)
+          .toSet()
+          .toList()
+        ..sort((a, b) => b.compareTo(a)));
   Map<String, dynamic> get subtitles =>
       Map<String, dynamic>.from(raw['subtitles'] ?? {});
   Map<String, dynamic> get automaticCaptions =>
