@@ -1,0 +1,42 @@
+name: vdm
+description: Video Download Manager 2.0 for Windows
+publish_to: none
+version: 2.0.0+1
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.0.0
+  flutter_svg: ^2.2.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  file_selector: ^1.0.4
+  sqlite3: ^3.0.0
+  uuid: ^4.5.1
+  crypto: ^3.0.7
+  window_manager: ^0.5.1
+  tray_manager: ^0.5.1
+  url_launcher: ^6.3.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/legal/
+  fonts:
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+          weight: 700
+    - family: Sarasa Mono SC
+      fonts:
+        - asset: assets/fonts/SarasaMonoSC-Regular.ttf

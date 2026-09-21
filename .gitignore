@@ -30,3 +30,13 @@ env/
 .idea/
 *.swp
 *.swo
+
+# VDM 2 local toolchains and release output
+.tools/
+desktop/.dart_tool/
+desktop/build/
+desktop/.flutter-plugins-dependencies
+desktop/windows/flutter/ephemeral/
+desktop/engines/*
+!desktop/engines/.gitkeep
+artifacts/

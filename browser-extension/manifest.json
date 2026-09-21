@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Video Download Manager 2",
+  "version": "2.0.0",
+  "description": "将网页视频、文件和磁力链接发送至本机 VDM 2。",
+  "permissions": ["activeTab", "storage", "contextMenus", "nativeMessaging", "downloads", "webRequest"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "action": {"default_popup": "popup.html", "default_title": "发送到 VDM 2"},
+  "background": {"service_worker": "background.mjs", "type": "module"},
+  "content_security_policy": {"extension_pages": "script-src 'self'; object-src 'none'"}
+}

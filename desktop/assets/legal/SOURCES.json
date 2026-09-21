@@ -1,0 +1,38 @@
+{
+  "yt-dlp": {
+    "version": "2026.08.19",
+    "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe",
+    "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+    "source": "https://github.com/yt-dlp/yt-dlp/tree/2026.08.19"
+  },
+  "aria2": {
+    "version": "release-1.37.0",
+    "url": "https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0-win-64bit-build1.zip",
+    "sha256": "67d015301eef0b612191212d564c5bb0a14b5b9c4796b76454276a4d28d9b288",
+    "source": "https://github.com/aria2/aria2/tree/release-1.37.0"
+  },
+  "deno": {
+    "version": "v2.9.7",
+    "url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-pc-windows-msvc.zip",
+    "sha256": "a0c3101b4158d1dfb7d6a78a7bf0f3de80c96bb423c152beec8beb22786f2238",
+    "source": "https://github.com/denoland/deno/tree/v2.9.7"
+  },
+  "ffmpeg": {
+    "version": "9.0.2",
+    "url": "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip",
+    "sha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+    "source": "https://github.com/GyanD/codexffmpeg/tree/9.0.2"
+  },
+  "sarasa": {
+    "version": "v1.0.41",
+    "url": "https://github.com/be5invis/Sarasa-Gothic/releases/download/v1.0.41/SarasaMonoSC-TTF-1.0.41.7z",
+    "sha256": "cd078f6103af293c8943f9a333beee2ecf1fe5b6901950a4f610eb37e1b3c0f2",
+    "source": "https://github.com/be5invis/Sarasa-Gothic/tree/v1.0.41"
+  },
+  "jetbrains": {
+    "version": "v2.304",
+    "url": "https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip",
+    "sha256": "6f6376c6ed2960ea8a963cd7387ec9d76e3f629125bc33d1fdcd7eb7012f7bbf",
+    "source": "https://github.com/JetBrains/JetBrainsMono/tree/v2.304"
+  }
+}

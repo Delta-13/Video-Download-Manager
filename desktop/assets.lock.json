@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "platform": "windows-x64",
+  "downloads": {
+    "yt-dlp": {
+      "version": "2026.08.19",
+      "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe",
+      "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+      "source": "https://github.com/yt-dlp/yt-dlp/tree/2026.08.19"
+    },
+    "aria2": {
+      "version": "release-1.37.0",
+      "url": "https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0-win-64bit-build1.zip",
+      "sha256": "67d015301eef0b612191212d564c5bb0a14b5b9c4796b76454276a4d28d9b288",
+      "source": "https://github.com/aria2/aria2/tree/release-1.37.0"
+    },
+    "deno": {
+      "version": "v2.9.7",
+      "url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-pc-windows-msvc.zip",
+      "sha256": "a0c3101b4158d1dfb7d6a78a7bf0f3de80c96bb423c152beec8beb22786f2238",
+      "source": "https://github.com/denoland/deno/tree/v2.9.7"
+    },
+    "ffmpeg": {
+      "version": "9.0.2",
+      "url": "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip",
+      "sha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+      "source": "https://github.com/GyanD/codexffmpeg/tree/9.0.2"
+    },
+    "sarasa": {
+      "version": "v1.0.41",
+      "url": "https://github.com/be5invis/Sarasa-Gothic/releases/download/v1.0.41/SarasaMonoSC-TTF-1.0.41.7z",
+      "sha256": "cd078f6103af293c8943f9a333beee2ecf1fe5b6901950a4f610eb37e1b3c0f2",
+      "source": "https://github.com/be5invis/Sarasa-Gothic/tree/v1.0.41"
+    },
+    "jetbrains": {
+      "version": "v2.304",
+      "url": "https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip",
+      "sha256": "6f6376c6ed2960ea8a963cd7387ec9d76e3f629125bc33d1fdcd7eb7012f7bbf",
+      "source": "https://github.com/JetBrains/JetBrainsMono/tree/v2.304"
+    }
+  },
+  "files": [
+    {
+      "path": "engines/yt-dlp.exe",
+      "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+      "origin": "yt-dlp"
+    },
+    {
+      "path": "engines/aria2c.exe",
+      "sha256": "be2099c214f63a3cb4954b09a0becd6e2e34660b886d4c898d260febfe9d70c2",
+      "origin": "aria2"
+    },
+    {
+      "path": "engines/deno.exe",
+      "sha256": "e020f3e232bd16e33768dee528e5983349c962952051ced0a5d58ad42f5d9b33",
+      "origin": "deno"
+    },
+    {
+      "path": "engines/ffmpeg.exe",
+      "sha256": "3256173f3f8bffd7df12227c68adf68025edb1832273a9530688a7bb1ed8edec",
+      "origin": "ffmpeg"
+    },
+    {
+      "path": "engines/ffprobe.exe",
+      "sha256": "f0d36ecbbdd3bcfac3efa078c96c7271c2e68b3810595552ac3b7f17e9a65c52",
+      "origin": "ffmpeg"
+    },
+    {
+      "path": "assets/fonts/SarasaMonoSC-Regular.ttf",
+      "sha256": "95718854631c2386845e618aa5bc37908e5fb8a919eb56e40f70e1170d80af94",
+      "origin": "sarasa"
+    },
+    {
+      "path": "assets/fonts/JetBrainsMono-Regular.ttf",
+      "sha256": "a0bf60ef0f83c5ed4d7a75d45838548b1f6873372dfac88f71804491898d138f",
+      "origin": "jetbrains"
+    },
+    {
+      "path": "assets/fonts/JetBrainsMono-Bold.ttf",
+      "sha256": "5590990c82e097397517f275f430af4546e1c45cff408bde4255dad142479dcb",
+      "origin": "jetbrains"
+    }
+  ],
+  "legal": [
+    {
+      "path": "assets/legal/yt-dlp-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/yt-dlp/yt-dlp/2026.08.19/LICENSE",
+      "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c"
+    },
+    {
+      "path": "assets/legal/yt-dlp-THIRD_PARTY_LICENSES.txt",
+      "url": "https://raw.githubusercontent.com/yt-dlp/yt-dlp/2026.08.19/THIRD_PARTY_LICENSES.txt",
+      "sha256": "472aefe951c7db35e1657c1d13fd337140511ed6f2b329205105ad441c5a02b7"
+    },
+    {
+      "path": "assets/legal/deno-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/denoland/deno/v2.9.7/LICENSE.md",
+      "sha256": "f62497fffecc0852960c8d3e6934b9db86d16396e9b604072e923892cae3a588"
+    },
+    {
+      "path": "assets/legal/sarasa-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/be5invis/Sarasa-Gothic/v1.0.41/LICENSE",
+      "sha256": "32c932e0dbae4f6e6386964bbc2d04178707665a05ca65cf636241af13d50a53"
+    }
+  ]
+}

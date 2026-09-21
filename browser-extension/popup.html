@@ -1,0 +1,4 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VDM 2</title><link rel="stylesheet" href="popup.css"></head>
+<body><header><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg><div><h1>VDM 2</h1><p>Video Download Manager</p></div></header>
+<main><button id="send">发送当前页面</button><p id="status" role="status">粘贴网页地址的下载体验，直接从浏览器开始。</p><hr><label><input type="checkbox" id="capture">接管普通文件下载</label><p class="muted">仅接管可重放的 GET 下载；失败时保留浏览器下载。</p><hr><p>扩展 ID</p><code id="extensionId"></code><button class="secondary" id="copy">复制扩展 ID</button><p class="muted">首次使用：在 VDM 设置中粘贴此 ID，点击“连接浏览器”。</p></main><script src="popup.mjs" type="module"></script></body></html>

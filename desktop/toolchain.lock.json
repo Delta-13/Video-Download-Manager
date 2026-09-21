@@ -1,0 +1,15 @@
+{
+  "flutter": {
+    "version": "3.47.5",
+    "dart": "3.13.4",
+    "revision": "6a19cca56475dbfba1478ee68d7bd0c2ef891da1",
+    "url": "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.47.5-stable.zip",
+    "sha256": "0ccd71931f49c2fbe394b1eeb6d79af3d624058a043ea0d03d34160581624fb8"
+  },
+  "innoSetup": {
+    "version": "7.1.0",
+    "url": "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe",
+    "sha256": "0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f"
+  },
+  "windows": { "architecture": "x64", "visualStudio": "2022", "sdk": "10.0.26100.0" }
+}
