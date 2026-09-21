@@ -1,0 +1,48 @@
+name: VDM 2 Windows
+on:
+  workflow_dispatch:
+  push:
+    paths: ['desktop/**', 'browser-extension/**', 'scripts/**', '.github/workflows/windows-v2.yml']
+  pull_request:
+    paths: ['desktop/**', 'browser-extension/**', 'scripts/**', '.github/workflows/windows-v2.yml']
+permissions:
+  contents: read
+jobs:
+  verify-and-package:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare pinned SDK and installer compiler
+        shell: pwsh
+        run: |
+          ./scripts/setup-flutter.ps1
+          ./scripts/setup-inno.ps1
+      - name: Test and package
+        shell: pwsh
+        run: ./scripts/build.ps1
+      - name: Native engine integration
+        shell: pwsh
+        working-directory: desktop
+        run: ../.tools/flutter/bin/flutter.bat test integration_test/downloads_test.dart -d windows --no-pub
+      - name: Legacy regression
+        run: python -m unittest discover -s tests -v
+      - name: Portable runtime and native host
+        shell: pwsh
+        run: |
+          ./scripts/smoke-package.ps1
+          python scripts/smoke_native_host.py --host artifacts/VDM-2.0.0-windows-x64/vdm_native_host.exe --report artifacts/native-host-checks.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VDM-2.0.0-windows-x64
+          path: |
+            artifacts/*.exe
+            artifacts/*.zip
+            artifacts/SHA256SUMS.txt
+            artifacts/screenshots/
