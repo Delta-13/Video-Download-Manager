@@ -1,4 +1,6 @@
-# Video Download Manager 2.0
+# Video Download Manager 2.1
+
+新增 **字幕翻译** 工作台：在线兼容 API / 本地 Ollama 翻译，可选 whisper.cpp 转写，校对与双语导出。参见随包的 `AI-Subtitles.md`（源码位于 `docs/AI-Subtitles.md`）。本地 AI 程序和模型可选安装，下载功能不依赖它们。
 
 Windows 10/11 x64. Install the setup package, or extract the complete portable ZIP
 and run `vdm.exe`. Keep the DLLs, data/ and engines/ next to the executable.

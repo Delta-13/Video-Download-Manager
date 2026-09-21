@@ -10,6 +10,7 @@ import 'store.dart';
 import 'cookies.dart';
 import 'engines.dart';
 import 'native.dart';
+import '../subtitles/workspace.dart';
 
 final downloadsProvider = ChangeNotifierProvider<DownloadController>(
   (ref) => throw UnimplementedError('Override at startup'),
@@ -20,6 +21,11 @@ class DownloadController extends ChangeNotifier {
   final String dataDirectory;
   final EnginePaths paths;
   final bool enableBrowser;
+  late final SubtitleWorkspace subtitles = SubtitleWorkspace(
+    store,
+    paths,
+    dataDirectory,
+  );
   late final CookieVault cookies = CookieVault(
     store,
     p.join(dataDirectory, 'cookies-temp'),
@@ -501,6 +507,7 @@ class DownloadController extends ChangeNotifier {
     }
     task.published = false;
     task.output = null;
+    task.subtitleOutputs = [];
     task.filesConfirmed = false;
     task.progress = DownloadProgress();
     await resume(task);
@@ -625,7 +632,7 @@ class DownloadController extends ChangeNotifier {
         )
         .firstOrNull;
     if (action == 'ping') {
-      return {'ok': true, 'version': '2.0.0'};
+      return {'ok': true, 'version': '2.1.0'};
     }
     if (action == 'send' || action == 'prepare') {
       final source = validateSource(request['url'] as String);
@@ -714,6 +721,7 @@ class DownloadController extends ChangeNotifier {
 
   Future<void> shutdown() async {
     _closing = true;
+    await subtitles.shutdown();
     _timer?.cancel();
     while (_ticking) {
       await Future<void>.delayed(const Duration(milliseconds: 50));

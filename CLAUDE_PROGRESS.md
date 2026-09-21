@@ -1,5 +1,13 @@
 # CLAUDE_PROGRESS.md
 
+## 2026-09 · AI 字幕 2.1
+
+分支 `codex/ai-subtitle-translation`。独立阅读并参考 Transcript_Translate 的转写/翻译流程，采用原生 Dart + 在线兼容接口 / Ollama + 可选 whisper.cpp，不复制未声明许可证的代码，不增加 Python/PyTorch 运行时。
+
+已实现字幕工作台、下载完成入口、SRT/VTT/ASS、原文/双语导出、校对、SQLite 断点记录、DPAPI API 密钥、端点绑定、严格批次校验、JSON Schema、重试/取消和原生进程清理。保留旧版与旧制品。真实 qwen2.5:3b、Whisper tiny 和 FFmpeg 已完成音频到双语字幕集成；具体测试边界及证据见 `docs/verification-ai-subtitles.md`。
+
+构建版本 2.1.0；在线真实服务需要用户自备凭据，当前以可控 HTTP 服务验收协议。可选 Whisper 准备脚本固定来源与 SHA-256。没有推送远端。
+
 ## 2026-09 · Flutter 2.0 实施进度
 
 用户明确批准新增独立 Flutter 应用及内置下载引擎；下方历史批次的“无新依赖/不改 GUI”仅适用于旧维护批次。

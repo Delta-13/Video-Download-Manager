@@ -1,7 +1,10 @@
 param([string]$PackageDirectory = '', [string]$ReportName = 'portable-runtime.json')
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-if (!$PackageDirectory) { $PackageDirectory = Join-Path $root 'artifacts/VDM-2.0.0-windows-x64' }
+if (!$PackageDirectory) {
+    $version = (Select-String -LiteralPath (Join-Path $root 'desktop/pubspec.yaml') -Pattern '^version: ([0-9]+\.[0-9]+\.[0-9]+)').Matches[0].Groups[1].Value
+    $PackageDirectory = Join-Path $root "artifacts/VDM-$version-windows-x64"
+}
 $package = [IO.Path]::GetFullPath($PackageDirectory)
 $report = Join-Path $root ('artifacts/'+$ReportName)
 if (Test-Path -LiteralPath $report) { Remove-Item -LiteralPath $report }

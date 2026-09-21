@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/controller.dart';
 import '../core/native.dart';
 import 'design.dart';
+import 'subtitles.dart';
 
 class SettingsPage extends StatefulWidget {
   final DownloadController controller;
@@ -49,6 +50,18 @@ class _SettingsPageState extends State<SettingsPage> {
     return ListView(
       padding: const EdgeInsets.all(32),
       children: [
+        section('subtitles', 'AI 字幕', [
+          ListenableBuilder(
+            listenable: c.subtitles,
+            builder: (context, _) => OutlinedButton.icon(
+              onPressed: c.subtitles.busy
+                  ? null
+                  : () => showSubtitleSettings(context, c.subtitles),
+              icon: const VIcon('settings'),
+              label: const Text('配置在线 / 本地翻译与转写'),
+            ),
+          ),
+        ]),
         section('settings', '外观', [
           Wrap(
             spacing: 12,
@@ -295,7 +308,7 @@ class _SettingsPageState extends State<SettingsPage> {
           onPressed: () => showLicensePage(
             context: context,
             applicationName: 'Video Download Manager',
-            applicationVersion: '2.0.0',
+            applicationVersion: '2.1.0',
           ),
           child: const Text('开源许可与第三方声明'),
         ),

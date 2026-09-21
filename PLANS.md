@@ -1,5 +1,20 @@
 # PLANS.md
 
+## AI 字幕分支 · 2026-09
+
+分支：`codex/ai-subtitle-translation`，基于已验收的 Flutter 2.0。参考 `Delta-13/Transcript_Translate` 的转写/翻译工作流（commit `5d434c5400c7a5ef44fc0becb085c1fe8286fbc1`），采用独立 Dart 实现，保持无需 Python 的主应用架构。
+
+| Task | Status | Notes |
+|---|---|---|
+| 阅读参考仓库与当前字幕架构 | done | 原仓库为本地 Whisper + Transformers，未发现许可文件，不复制其实现 |
+| 字幕解析、保留时间轴、双语导出 | done | SRT / VTT / ASS、校对、防覆盖；ASS 按格式精度舍入 |
+| 在线兼容 API 与本地 Ollama | done | 自定义端点/模型、DPAPI、编号校验、JSON Schema、取消/重试 |
+| 可选本地 whisper.cpp 转写 | done | 真实 tiny 模型完成音频 → 转写 → 本地翻译 → 双语字幕闭环 |
+| Flutter 字幕工作台与下载任务入口 | done | 工业双主题、150–250 ms 动画、SVG、预览、SQLite 记录 |
+| 自动测试、真实本地模型测试、构建与文档 | done | analyze、Flutter 35 项、Python 5 项、扩展 4 项、两组原生集成及真实模型通过；2.1.0 安装包/ZIP与便携运行检查完成 |
+
+不修改旧 Python/PySide6 应用或历史安装包；新功能作为 2.1.0 构建，保留已交付的 2.0.0 制品。
+
 ## 2026-09 · 用户批准的 2.0 Flutter 实施
 
 本次范围：新增 `desktop/`、`browser-extension/`、`scripts/`、`docs/` 和 Windows CI；更新根文档及忽略规则。沿用下方历史维护记录，新的产品行为和必要依赖以本次用户批准计划为准。

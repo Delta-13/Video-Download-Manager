@@ -33,16 +33,21 @@ jobs:
         run: ../.tools/flutter/bin/flutter.bat test integration_test/downloads_test.dart -d windows --no-pub
       - name: Legacy regression
         run: python -m unittest discover -s tests -v
+      - name: Native subtitle integration (HTTP fixture, no cloud credentials)
+        shell: pwsh
+        working-directory: desktop
+        run: ../.tools/flutter/bin/flutter.bat test integration_test/subtitles_test.dart -d windows --no-pub
       - name: Portable runtime and native host
         shell: pwsh
         run: |
           ./scripts/smoke-package.ps1
-          python scripts/smoke_native_host.py --host artifacts/VDM-2.0.0-windows-x64/vdm_native_host.exe --report artifacts/native-host-checks.json
+          python scripts/smoke_native_host.py --host artifacts/VDM-2.1.0-windows-x64/vdm_native_host.exe --report artifacts/native-host-checks.json
       - uses: actions/upload-artifact@v4
         with:
-          name: VDM-2.0.0-windows-x64
+          name: VDM-2.1.0-windows-x64
           path: |
             artifacts/*.exe
             artifacts/*.zip
             artifacts/SHA256SUMS.txt
             artifacts/screenshots/
+            artifacts/screenshots-subtitles/

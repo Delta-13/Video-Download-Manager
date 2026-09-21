@@ -40,3 +40,4 @@ desktop/windows/flutter/ephemeral/
 desktop/engines/*
 !desktop/engines/.gitkeep
 artifacts/
+optional/

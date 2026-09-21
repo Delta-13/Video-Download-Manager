@@ -1,5 +1,14 @@
 # 更新日志 (Changelog)
 
+## [2.1.0] - 2026-09-22
+
+- 字幕工作台：在线 OpenAI 兼容 API、本地 Ollama，保留时间码、校对和双语 SRT/VTT/ASS 导出。
+- 可选 whisper.cpp 本地音视频转写，复用 FFmpeg 与 Windows 子进程树管理。
+- 批次编号校验、有限重试、取消、SQLite 重启继续；API 密钥使用 DPAPI 并绑定服务地址。
+- 下载详情新增翻译入口和已发布字幕记录，导出重名自动编号。
+- 新增 HTTP 协议、明暗主题缩放和 Windows 原生字幕测试；提供模型准备脚本。
+- 参考 Transcript_Translate 流程独立实现，不增加 Python/PyTorch 运行时。
+
 ## [2.0.0] - 2026-09-22
 
 - 公网验收补充：用户提供的 YouTube 与 Pornhub 链接通过真实解析/完整下载；修复 YouTube 画质列表误包含 storyboard 预览图尺寸的问题。

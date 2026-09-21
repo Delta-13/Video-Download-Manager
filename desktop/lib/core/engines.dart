@@ -343,6 +343,12 @@ class VideoRunner {
         );
         if (finalFiles.any((f) => p.equals(f, file.path))) {
           task.output = published;
+        } else if ({
+          '.srt',
+          '.vtt',
+          '.ass',
+        }.contains(p.extension(published).toLowerCase())) {
+          task.subtitleOutputs = [...task.subtitleOutputs, published];
         }
       }
       task.published = true;

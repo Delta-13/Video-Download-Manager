@@ -176,6 +176,7 @@ class DownloadTask {
   Schedule? schedule;
   List<TorrentFile> files = [];
   List<int> selectedFiles;
+  List<String> subtitleOutputs;
   bool filesConfirmed, published;
   DownloadTask({
     required this.id,
@@ -192,6 +193,7 @@ class DownloadTask {
     this.output,
     this.schedule,
     this.selectedFiles = const [],
+    this.subtitleOutputs = const [],
     this.filesConfirmed = false,
     this.published = false,
     this.requestId,
@@ -222,6 +224,7 @@ class DownloadTask {
     'output': output,
     'schedule': schedule?.toJson(),
     'selectedFiles': selectedFiles,
+    'subtitleOutputs': subtitleOutputs,
     'filesConfirmed': filesConfirmed,
     'published': published,
     'requestId': requestId,
@@ -241,6 +244,7 @@ class DownloadTask {
     output: j['output'],
     schedule: j['schedule'] == null ? null : Schedule.fromJson(j['schedule']),
     selectedFiles: List<int>.from(j['selectedFiles'] ?? []),
+    subtitleOutputs: List<String>.from(j['subtitleOutputs'] ?? []),
     filesConfirmed: j['filesConfirmed'] ?? false,
     published: j['published'] ?? false,
     requestId: j['requestId'],

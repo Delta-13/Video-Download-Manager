@@ -1,6 +1,8 @@
 # 视频下载管理器 (Video Download Manager)
 
-## 2.0.0 · Flutter Windows 版
+## 2.1.0 · Flutter Windows 版与 AI 字幕
+
+新增在线兼容 API / 本地 Ollama 字幕翻译、可选 whisper.cpp 本地转写、双语 SRT/VTT/ASS 导出、校对与断点继续。[AI 字幕使用说明](docs/AI-Subtitles.md)。主应用无需 Python；本地 AI 模型单独配置。
 
 新版位于独立的 `desktop/` 工程：Flutter / Riverpod / SQLite 界面与队列，内置 yt-dlp、aria2、FFmpeg 和 Deno。采用 Motrix 风格的任务管理布局、工业毛玻璃双主题、本地 SVG 图标与等宽字体。
 

@@ -11,7 +11,7 @@ Future<int> verifyRuntime(String reportPath) async {
   final root = await Directory.systemTemp.createTemp('vdm-runtime-check-');
   final paths = EnginePaths.discover();
   final report = <String, dynamic>{
-    'version': '2.0.0',
+    'version': '2.1.0',
     'executable': Platform.resolvedExecutable,
     'checks': <String, dynamic>{},
   };

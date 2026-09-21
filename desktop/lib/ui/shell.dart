@@ -9,6 +9,7 @@ import '../core/models.dart';
 import 'design.dart';
 import 'new_task.dart';
 import 'settings.dart';
+import 'subtitles.dart';
 
 class DownloadShell extends ConsumerWidget {
   const DownloadShell({super.key});
@@ -58,6 +59,8 @@ class DownloadShell extends ConsumerWidget {
                                     Text(
                                       controller.filter == 'settings'
                                           ? '偏好设置'
+                                          : controller.filter == 'subtitles'
+                                          ? '字幕翻译'
                                           : '下载任务',
                                       style: const TextStyle(
                                         fontSize: 26,
@@ -68,6 +71,8 @@ class DownloadShell extends ConsumerWidget {
                                     Text(
                                       controller.filter == 'settings'
                                           ? '外观、下载与浏览器连接'
+                                          : controller.filter == 'subtitles'
+                                          ? '本地转写 · AI 翻译 · 双语字幕'
                                           : '${controller.tasks.where((t) => t.status.active).length} 项正在进行 · ${controller.tasks.length} 项任务',
                                       style: TextStyle(
                                         color: colors.secondary,
@@ -105,6 +110,8 @@ class DownloadShell extends ConsumerWidget {
                         Expanded(
                           child: controller.filter == 'settings'
                               ? SettingsPage(controller)
+                              : controller.filter == 'subtitles'
+                              ? SubtitlePage(controller.subtitles)
                               : Row(
                                   children: [
                                     Expanded(
@@ -339,6 +346,7 @@ class _Sidebar extends StatelessWidget {
       ('completed', 'check', '已完成'),
       ('failed', 'error', '失败'),
       ('scheduled', 'clock', '计划任务'),
+      ('subtitles', 'subtitles', '字幕翻译'),
     ];
     return Glass(
       reduced: controller.reduceTransparency,
@@ -373,15 +381,20 @@ class _Sidebar extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text('2.0.0', style: TextStyle(fontSize: 10)),
+                      Text('2.1.0', style: TextStyle(fontSize: 10)),
                     ],
                   ),
                 ],
               ],
             ),
           ),
-          ...entries.map((e) => _nav(context, e.$1, e.$2, e.$3)),
-          const Spacer(),
+          Expanded(
+            child: ListView(
+              children: entries
+                  .map((e) => _nav(context, e.$1, e.$2, e.$3))
+                  .toList(),
+            ),
+          ),
           _nav(context, 'settings', 'settings', '设置'),
           const SizedBox(height: 24),
         ],
@@ -794,6 +807,47 @@ class _TaskDetailsState extends State<TaskDetails> {
                   }
                 },
                 child: const Text('重新下载'),
+              ),
+            if (t.status == TaskStatus.completed &&
+                t.output != null &&
+                t.kind == TaskKind.video)
+              ListenableBuilder(
+                listenable: controller.subtitles,
+                builder: (context, _) => OutlinedButton.icon(
+                  onPressed: controller.subtitles.busy
+                      ? null
+                      : () async {
+                          String? path = t.output;
+                          if (t.subtitleOutputs.length == 1) {
+                            path = t.subtitleOutputs.first;
+                          }
+                          if (t.subtitleOutputs.length > 1) {
+                            path = await showDialog<String>(
+                              context: context,
+                              builder: (context) => SimpleDialog(
+                                title: const Text('选择要翻译的字幕'),
+                                children: [
+                                  for (final file in t.subtitleOutputs)
+                                    SimpleDialogOption(
+                                      onPressed: () =>
+                                          Navigator.pop(context, file),
+                                      child: Text(p.basename(file)),
+                                    ),
+                                ],
+                              ),
+                            );
+                          }
+                          if (path == null) return;
+                          if (context.mounted &&
+                              MediaQuery.sizeOf(context).width < 1080) {
+                            Navigator.of(context).pop();
+                          }
+                          controller.view('subtitles');
+                          await controller.subtitles.importFile(path);
+                        },
+                  icon: const VIcon('subtitles'),
+                  label: const Text('翻译字幕'),
+                ),
               ),
             OutlinedButton.icon(
               onPressed: () => launchUrl(

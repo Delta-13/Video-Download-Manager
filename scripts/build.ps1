@@ -1,6 +1,7 @@
 param([switch]$SkipAssets, [switch]$SkipTests, [switch]$SkipInstaller)
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$version = (Select-String -LiteralPath (Join-Path $root 'desktop/pubspec.yaml') -Pattern '^version: ([0-9]+\.[0-9]+\.[0-9]+)').Matches[0].Groups[1].Value
 Set-Location -LiteralPath $root
 $flutter = Join-Path $root '.tools/flutter/bin/flutter.bat'
 if (!(Test-Path -LiteralPath $flutter)) {
@@ -36,11 +37,14 @@ try {
     if ($LASTEXITCODE) { throw 'Windows build failed' }
 } finally { Pop-Location }
 $release = Join-Path $root 'desktop/build/windows/x64/runner/Release'
-$stage = Join-Path $root 'artifacts/VDM-2.0.0-windows-x64'
+$stage = Join-Path $root "artifacts/VDM-$version-windows-x64"
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Copy-Item -Path (Join-Path $release '*') -Destination $stage -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $root 'browser-extension') -Destination $stage -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $root 'docs/VDM-2-User-Guide.md') -Destination (Join-Path $stage 'README.md') -Force
+Copy-Item -LiteralPath (Join-Path $root 'docs/AI-Subtitles.md') -Destination (Join-Path $stage 'AI-Subtitles.md') -Force
+New-Item -ItemType Directory -Force -Path (Join-Path $stage 'scripts') | Out-Null
+Copy-Item -LiteralPath (Join-Path $root 'scripts/setup-whisper.ps1') -Destination (Join-Path $stage 'scripts') -Force
 Copy-Item -LiteralPath (Join-Path $root 'desktop/assets.lock.json') -Destination $stage -Force
 Copy-Item -LiteralPath (Join-Path $root 'desktop/toolchain.lock.json') -Destination $stage -Force
 Copy-Item -LiteralPath (Join-Path $root 'desktop/assets/legal') -Destination $stage -Recurse -Force
@@ -60,12 +64,12 @@ foreach ($file in $lock.files) {
         if ($actual -ne $file.sha256) { throw ('Runtime hash mismatch: '+$file.path) }
     }
 }
-Compress-Archive -Path $stage -DestinationPath (Join-Path $root 'artifacts/VDM-2.0.0-windows-x64.zip') -Force
-Compress-Archive -Path (Join-Path $root 'browser-extension') -DestinationPath (Join-Path $root 'artifacts/VDM-2.0.0-browser-extension.zip') -Force
+Compress-Archive -Path $stage -DestinationPath (Join-Path $root "artifacts/VDM-$version-windows-x64.zip") -Force
+Compress-Archive -Path (Join-Path $root 'browser-extension') -DestinationPath (Join-Path $root "artifacts/VDM-$version-browser-extension.zip") -Force
 if (!$SkipInstaller) {
     $iscc = Join-Path $root '.tools/inno/ISCC.exe'
     if (!(Test-Path $iscc)) { $iscc = (Get-Command ISCC -ErrorAction Stop).Source }
-    & $iscc scripts/installer.iss
+    & $iscc "/DAppVersion=$version" scripts/installer.iss
     if ($LASTEXITCODE) { throw 'Installer build failed' }
 }
 Get-ChildItem -LiteralPath (Join-Path $root 'artifacts') -File | Where-Object Extension -in '.exe','.zip' | ForEach-Object {

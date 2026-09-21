@@ -1,7 +1,7 @@
 name: vdm
-description: Video Download Manager 2.0 for Windows
+description: Video Download Manager with AI subtitles for Windows
 publish_to: none
-version: 2.0.0+1
+version: 2.1.0+2
 environment:
   sdk: '>=3.10.0 <4.0.0'
 dependencies:
