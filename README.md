@@ -58,6 +58,7 @@ python src/1.12.2_mac.py
 ```
 Video-Download-Manager/
 ├── README.md           # 本说明文件
+├── CODE_GUIDE.md       # 代码结构、调用流程与修改入口
 ├── CLAUDE.md           # 维护协作约定（供 AI/协作者参考）
 ├── requirements.txt    # Python 依赖
 ├── src/                # 当前稳定版（建议从这里运行）
@@ -171,6 +172,139 @@ Video-Download-Manager/
 
 - [`Version-2/`](Version-2/) 是基于 PySide6 的实验性重写，目前仍是 alpha 阶段，未稳定，仅供参考。运行前请额外安装 `PySide6`；开始下载时会查找 `src/` 中的 FFmpeg 或系统 `PATH`，找不到时不会创建下载任务。
 - [`archive/`](archive/) 保留了 1.0.0 到 1.12.0 之间的全部历史版本快照，仅作归档保留，不再维护。
+
+### Version-2 从源码启动
+
+以下命令均在**仓库根目录**执行。入口是 `Version-2/main.py`；`Version-2/test.py` 只是界面原型，不会执行真实下载。建议使用 Python 3.11 或以上版本；当前 yt-dlp 的 Python 支持范围见[上游依赖说明](https://github.com/yt-dlp/yt-dlp#dependencies)。
+
+1. 创建虚拟环境（已有 `.venv` 时跳过）。
+
+   Windows PowerShell：
+
+   ```powershell
+   python -m venv .venv
+   ```
+
+   macOS 终端：
+
+   ```bash
+   python3 -m venv .venv
+   ```
+
+2. 安装运行依赖。下面直接调用虚拟环境解释器，无需激活环境。
+
+   Windows PowerShell：
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt "PySide6>=6.6.0"
+   ```
+
+   macOS 终端：
+
+   ```bash
+   ./.venv/bin/python -m pip install -r requirements.txt 'PySide6>=6.6.0'
+   ```
+
+3. 准备 FFmpeg，并确认它能执行。
+
+   Windows 使用仓库 `src/` 中的程序；如果克隆后只有 Git LFS 指针文件，先执行 `git lfs pull`，或将实际的 `ffmpeg.exe`、`ffprobe.exe` 放入 `src/`。
+
+   ```powershell
+   .\src\ffmpeg.exe -version
+   .\src\ffprobe.exe -version
+   ```
+
+   macOS 可通过 Homebrew 安装：
+
+   ```bash
+   brew install ffmpeg
+   ffmpeg -version
+   ffprobe -version
+   ```
+
+   Version-2 优先查找随源码或程序分发的 FFmpeg，最后才查找 `PATH`。macOS 上若存在 `src/ffmpeg`，还需运行 `./src/ffmpeg -version` 检查它；如果与本机架构不兼容或无法执行，需替换为可运行的版本。仅在 `PATH` 安装另一个版本不会覆盖优先命中的文件。完整查找顺序见[代码说明](CODE_GUIDE.md#ffmpeg-查找与打包)。
+
+4. 启动应用。
+
+   Windows PowerShell：
+
+   ```powershell
+   .\.venv\Scripts\python.exe Version-2/main.py
+   ```
+
+   macOS 终端：
+
+   ```bash
+   ./.venv/bin/python Version-2/main.py
+   ```
+
+   出现 `Yt-dlp GUI` 窗口即表示 GUI 已启动。选择一个现有且可写的下载目录，填入视频 URL，再点击“开始下载”。该版本直接创建下载任务，没有稳定版的“扫描链接”步骤。
+
+### Version-2 打包
+
+以下命令使用 PyInstaller 6 的目录分发模式（`--onedir`），并把 FFmpeg、FFprobe 一起带入包内。**Windows 包在 Windows 上构建，macOS 包在 macOS 上构建**；使用与目标机器架构匹配的 Python 和 FFmpeg。参数含义见 [PyInstaller 使用文档](https://pyinstaller.org/en/stable/usage.html)。
+
+1. 完成上面的依赖安装与 FFmpeg 检查后，在同一虚拟环境安装打包工具。
+
+   Windows PowerShell：
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m pip install "PyInstaller>=6,<7"
+   ```
+
+   macOS 终端：
+
+   ```bash
+   ./.venv/bin/python -m pip install 'PyInstaller>=6,<7'
+   ```
+
+2. 在仓库根目录执行对应平台的打包命令。
+
+   Windows PowerShell（行末反引号后不要加空格）：
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m PyInstaller --clean --onedir --windowed --name VDM-Version2 `
+     --add-binary "src/ffmpeg.exe:." `
+     --add-binary "src/ffprobe.exe:." `
+     Version-2/main.py
+   ```
+
+   macOS 终端（使用前一步 Homebrew 安装的程序）：
+
+   ```bash
+   ./.venv/bin/python -m PyInstaller --clean --onedir --windowed --name VDM-Version2 \
+     --add-binary "$(command -v ffmpeg):." \
+     --add-binary "$(command -v ffprobe):." \
+     Version-2/main.py
+   ```
+
+   `--add-binary` 把这两个程序收集到包内，Version-2 的 `find_ffmpeg_location()` 能找到打包资源目录。Qt 与 Python 依赖由 PyInstaller 的导入分析和 hooks 收集。
+
+3. 启动生成的程序。
+
+   Windows PowerShell：
+
+   ```powershell
+   .\dist\VDM-Version2\VDM-Version2.exe
+   ```
+
+   macOS 终端：
+
+   ```bash
+   open dist/VDM-Version2.app
+   ```
+
+   Windows 分发整个 `dist/VDM-Version2/` 文件夹（包括 `_internal/`），不能只复制 `.exe`；macOS 分发 `dist/VDM-Version2.app`。`build/` 是中间产物，根目录的 `VDM-Version2.spec` 是本次生成的打包配置；`src/*.spec` 只对应 tkinter 稳定版。
+
+4. 检查分发包。
+
+   将分发目录或 `.app` 复制到仓库外，确认窗口、偏好设置和一次实际下载可用；音视频合并及字幕转换也需按使用场景检查。若双击后直接退出，可把构建命令中的 `--windowed` 改为 `--console` 后重建，并从终端运行以查看报错。macOS 正式分发所需的签名和公证不包含在上述开发构建流程中。
+
+这些命令已按源码路径与 PyInstaller 文档核对；本次文档更新未执行完整打包或 macOS 实机验证。构建成功也不代表所有网站均可下载；站点所需的额外依赖请参考 [yt-dlp 依赖说明](https://github.com/yt-dlp/yt-dlp#dependencies)。
+
+## 代码说明
+
+参见 [CODE_GUIDE.md](CODE_GUIDE.md)：包含稳定版与 Version-2 的模块职责、下载调用流程、配置保存方式、已知限制及常见修改入口。
 
 ## 验证
 

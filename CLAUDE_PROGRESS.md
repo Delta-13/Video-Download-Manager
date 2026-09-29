@@ -1,5 +1,20 @@
 # CLAUDE_PROGRESS.md
 
+## 2026-09-28：Version-2 开发文档
+
+| File | Status | Commit | Notes |
+|---|---|---|---|
+| `README.md`、`CODE_GUIDE.md` | done | 本提交 | 补齐双平台启动、PyInstaller 打包、产物位置、模块职责、Qt 信号调用链与已知限制 |
+| `PLANS.md` | done | 本提交 | 记录本次文档范围与验证结果 |
+
+本次仅修改文档。本机 Python 3.13.13 可用，但未安装 PySide6/PyInstaller；完整 GUI、打包与 macOS 实机验证不作为已通过项目记录。
+
+验证结果：`python -m unittest discover -s tests -v` 的 5 项测试通过；README 的 7 段 PowerShell 命令语法检查通过；两份文档的本地链接、锚点、代码围栏与构建输入路径检查通过；`src/ffmpeg.exe -version`、`src/ffprobe.exe -version` 均成功。限定到本次文档的 `git diff --check` 通过。
+
+提交范围为上述文档及本进度文件，不包含构建产物或源码修改。全仓库 Git 检查会触发 LFS 临时目录写入，而当前 `.git` 默认只读；审查状态时使用一次性禁用 LFS filter 的只读命令，不更改仓库配置。
+
+2026-09-29：用户提供作者信息并明确要求设为全局 Git 配置；已配置并验证生效身份，解除此前 `Author identity unknown` 的提交阻塞。本次文档作为一个本地提交完成，不推送。
+
 ## File status
 
 | File | Status | Commit | Notes |

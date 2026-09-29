@@ -1,5 +1,18 @@
 # PLANS.md
 
+## 2026-09-28：Version-2 开发文档
+
+- 目标：补齐 Version-2 的源码启动、打包和代码说明。
+- 范围：`README.md`、新增 `CODE_GUIDE.md`，以及本计划和 `CLAUDE_PROGRESS.md`；不修改程序行为。
+- 步骤：核对入口与依赖 → 编写文档 → 检查命令、链接并运行现有测试 → 审查差异并提交。
+
+| Task | Status | Notes |
+|---|---|---|
+| 核对源码与打包资源 | done | 已读取 Version-2 各模块、稳定版入口和现有测试；GitNexus 无可用索引，直接核对源码 |
+| 更新 README、新增代码说明 | done | 覆盖 Windows PowerShell 与 macOS 的启动、打包；代码说明包含模块职责、调用链、配置及现有边界 |
+| 验证文档 | done | 5 项回归测试、7 段 PowerShell 语法、链接/锚点、构建输入和文档差异检查通过；Windows FFmpeg/FFprobe 可执行 |
+| 提交文档 | done | 本提交仅包含本次 4 个 Markdown 文件；2026-09-29 按用户要求配置全局 Git 身份后完成；不推送 |
+
 ## Goal
 
 在不破坏既有用户行为的前提下：
