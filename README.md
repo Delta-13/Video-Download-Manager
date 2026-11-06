@@ -1,6 +1,6 @@
 # 视频下载管理器 (Video Download Manager)
 
-一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。当前最新稳定源码为 **Windows 1.12.1**（`src/1.12.1_win.py`）和 **macOS 1.12.2**（`src/1.12.2_mac.py`）。`Version-2/` 是 alpha 重写，尚未发布为 2.0。整理时本地最高 Git tag 为 `v1.9.0`，1.1 历史安装包保存在 [`archive/Releases/`](archive/Releases/)，两者均不代表最新源码版本。
+一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。当前最新稳定源码为 **Windows 1.12.1**（`src/1.12.1_win.py`）和 **macOS 1.12.2**（`src/1.12.2_mac.py`）。`Version-2/` 是 alpha 重写，尚未发布为 2.0。整理时本地最高 Git tag 为 `v1.9.0`，1.1 历史安装包在本机 `archive/Releases/` 保留但不再纳入 Git，两者均不代表最新源码版本。
 
 ## 软件功能概述
 
@@ -20,7 +20,7 @@
   - `ttkthemes` 用于优化界面风格
   - `yt-dlp` 视频下载核心
 - 必要文件：
-  - **Windows 平台**：`ffmpeg.exe`，需要放置在脚本所在目录（即 `src/`）下。
+  - **Windows 平台**：自行准备 `ffmpeg.exe` 和 `ffprobe.exe`，放置在脚本所在目录（即 `src/`）下；这些二进制文件已忽略，新克隆不会包含。
   - **macOS 平台**：通过 Homebrew 安装 `ffmpeg`（`brew install ffmpeg`，默认路径为 `/opt/homebrew/bin/ffmpeg`）。
 
 ## 安装
@@ -70,9 +70,9 @@ Video-Download-Manager/
 │   └── main.py         # alpha 入口
 └── archive/            # 历史文件；迁移清单与恢复方式见 archive/README.md
     ├── *.py / *.spec   # 历史源码与打包配置
-    ├── Releases/       # 1.1 历史打包产物（Windows / macOS）
+    ├── Releases/       # 本地保留的 1.1 历史打包产物（Git 忽略）
     ├── Version-2/      # 已停用的界面原型 test.py
-    └── resources/      # 当前程序未使用的 ffplay.exe、icon.ico
+    └── resources/      # 闲置资源；ffplay.exe 仅本地保留，icon.ico 仍跟踪
 ```
 
 ## 功能与操作指南
@@ -211,7 +211,7 @@ Video-Download-Manager/
 
 3. 准备 FFmpeg，并确认它能执行。
 
-   Windows 使用仓库 `src/` 中的程序；如果克隆后只有 Git LFS 指针文件，先执行 `git lfs pull`，或将实际的 `ffmpeg.exe`、`ffprobe.exe` 放入 `src/`。
+   Windows 请自行准备实际可执行的 `ffmpeg.exe`、`ffprobe.exe` 并放入 `src/`。它们与构建产物均由 Git 忽略，新克隆不会自动获得；本次取消跟踪保留已有本地副本。
 
    ```powershell
    .\src\ffmpeg.exe -version

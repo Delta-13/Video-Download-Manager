@@ -1,5 +1,14 @@
 # CLAUDE_PROGRESS.md
 
+## 2026-11-06：忽略构建产物
+
+- 已核对当前跟踪产物：历史分发目录 11321 个文件，以及 `src/ffmpeg`、`src/ffmpeg.exe`、`src/ffprobe.exe`、`archive/resources/ffplay.exe` 共 4 个工具。
+- `.gitignore` 补齐任意层级构建目录、PyInstaller 产物、可执行文件、动态库、分发包、无扩展名本地工具和生成的根目录 `VDM-Version2.spec`；源码、维护中的 spec 和图标仍跟踪。
+- 本次仅取消产物的本地 Git 跟踪，保留磁盘内容，不重写历史；README 与归档说明同步说明新克隆需自行提供 FFmpeg。
+- 用户要求未经允许不得执行与远程仓库关联的操作；本次不执行 push、fetch、pull、远程配置或 GitHub 仓库操作。GitHub 清理方法仅作说明，官方文档查询不连接本仓库的 Git 远程端点。
+- 验证通过：20 个产物忽略样例、12 个源码/spec/图标保留样例；11325 个本地索引删除条目与预期逐项一致，全部文件仍在磁盘；5 项现有 unittest 通过。已有 IDE 设置的跟踪状态保持不变。
+- 本次仅本地提交；远端当前文件、历史 blob 和 LFS 存储均未更改。未运行 GUI、真实下载或打包，也未执行历史重写或清理磁盘产物。
+
 ## 2026-11-06：仓库索引与归档整理
 
 - 已核对：当前稳定源码为 Windows 1.12.1、macOS 1.12.2；Version-2 是独立的 PySide6 alpha，最高本地 Git tag 是 v1.9.0，旧分发包为 1.1。

@@ -10,7 +10,7 @@
 | [`Version-2/`](Version-2/) | PySide6 alpha 重写，入口、窗口、下载线程和设置对话框分开存放 |
 | [`tests/`](tests/) | 标准库 `unittest` 回归测试，不依赖安装 Qt 或真实下载 |
 | [`archive/`](archive/) | 历史源码、旧界面原型及闲置资源；迁移清单见 [`archive/README.md`](archive/README.md) |
-| [`archive/Releases/`](archive/Releases/) | 1.1 历史打包产物，保留完整分发目录 |
+| `archive/Releases/` | 本地保留的 1.1 历史打包产物，完整分发目录由 Git 忽略，新克隆不包含 |
 
 稳定版与 Version-2 是两个独立 GUI。Version-2 仍为 alpha，尚未发布为 2.0。整理时本地最高 Git tag 为 `v1.9.0`，不能据此判断最新源码版本。Version-2 没有调用稳定版下载类，也没有复用 `src/validation.py`；修改一个版本不会自动改变另一个版本。
 

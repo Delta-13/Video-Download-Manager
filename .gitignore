@@ -2,9 +2,33 @@
 *.jpg
 *.png
 
-# 忽略构建文件夹
-/build/
+# 构建目录和 PyInstaller 分发包（包括子目录）
+build/
 dist/
+_internal/
+*.app/
+/Releases/
+/archive/Releases/
+
+# 编译后的程序、扩展和安装包
+*.exe
+*.dll
+*.pyd
+*.so
+*.so.*
+*.dylib
+*.pyz
+*.toc
+*.zip
+*.dmg
+*.tgz
+*.whl
+
+# 本地提供的无扩展名工具及自动生成的打包配置
+/src/ffmpeg
+/src/ffplay
+/src/ffprobe
+/VDM-Version2.spec
 
 # macOS 的系统文件
 .DS_Store

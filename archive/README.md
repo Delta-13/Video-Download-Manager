@@ -2,6 +2,8 @@
 
 这里保留已停用或被替代的文件，不作为当前开发入口。文件移动时保留内容，历史源码快照不继续维护。
 
+历史源码、打包配置和图标继续纳入版本管理；`Releases/`、`resources/ffplay.exe` 与 Python 缓存仅在本机保留，由 Git 忽略，新克隆不会包含这些产物。运行所需的 `src/ffmpeg`、`src/ffmpeg.exe`、`src/ffprobe.exe` 同样需要在本地自行准备。
+
 当前稳定版入口是仓库根目录下的 `src/1.12.1_win.py`（Windows）和 `src/1.12.2_mac.py`（macOS）；实验性 alpha 入口是 `Version-2/main.py`，尚未发布为 2.0。启动与打包命令见[主 README](../README.md)。
 
 ## 2026-11-06 整理清单
