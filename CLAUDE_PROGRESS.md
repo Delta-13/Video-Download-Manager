@@ -1,5 +1,15 @@
 # CLAUDE_PROGRESS.md
 
+## 2026-11-06：仓库索引与归档整理
+
+- 已核对：当前稳定源码为 Windows 1.12.1、macOS 1.12.2；Version-2 是独立的 PySide6 alpha，最高本地 Git tag 是 v1.9.0，旧分发包为 1.1。
+- 已使用 Codebase Memory 和 GitNexus 检查结构及引用；GitNexus 强制重建成功，原型 `MainWindow` 影响评估 LOW，直接引用仅来自文档，未识别到受影响流程；源码搜索未发现生产依赖。
+- 已整体迁移 `Releases/` → `archive/Releases/`，原型 → `archive/Version-2/test.py`，未使用的播放工具和图标 → `archive/resources/`；Python 缓存归入 Git 忽略的 `archive/cache/`。本次范围取代下方历史任务中“不动 Releases”的约束。
+- 11324 个跟踪文件全部为 Git `R100` 原样重命名，blob ID 不变；逐个核对工作区与 Git 原始内容：11322 个直接一致、1 个仅为 Git 检出换行差异、1 个 LFS 文件 SHA-256 一致；15 个保留的活动文件内容不变。最初的迁移前 SHA-256 清单随一次性临时目录清理，最终采用 Git 原始内容验证，结果保存在忽略的 `.gitnexus/archive-move-manifest.json`。
+- 迁移前后 `python -B -m unittest discover -s tests -v` 各 5 项通过；11 个活动 Python/spec 文件语法、24 个本地文档链接、必需资源和 LFS 路径检查通过；GitNexus `detect_changes(scope="all")` 风险 low，活动源码无修改。
+- 两个索引已排除 `archive/` 并重建：GitNexus 212 节点、326 关系、9 社区、0 流程；Codebase Memory 689 节点、2071 关系。GitNexus 没有识别出执行流程，因此归档判断同时依赖源码搜索与内容核对。
+- 本次为一个本地整理提交，不推送。未运行 GUI、真实网络下载、旧安装包或跨平台打包。
+
 ## 2026-09-28：Version-2 开发文档
 
 | File | Status | Commit | Notes |

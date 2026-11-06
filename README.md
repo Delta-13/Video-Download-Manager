@@ -1,6 +1,6 @@
 # 视频下载管理器 (Video Download Manager)
 
-一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。当前维护的源码版本为：`src/1.12.1_win.py`（Windows）/ `src/1.12.2_mac.py`（macOS）。正式 Git tag 和 `Releases/` 中的历史安装包不一定与源码版本同步。
+一款基于 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 的 tkinter 图形界面下载器。当前最新稳定源码为 **Windows 1.12.1**（`src/1.12.1_win.py`）和 **macOS 1.12.2**（`src/1.12.2_mac.py`）。`Version-2/` 是 alpha 重写，尚未发布为 2.0。整理时本地最高 Git tag 为 `v1.9.0`，1.1 历史安装包保存在 [`archive/Releases/`](archive/Releases/)，两者均不代表最新源码版本。
 
 ## 软件功能概述
 
@@ -66,9 +66,13 @@ Video-Download-Manager/
 │   ├── 1.12.2_mac.py   # macOS 主程序
 │   └── *.spec          # PyInstaller 打包配置
 ├── tests/              # 无外部依赖的回归测试
-├── archive/            # 历史版本快照（仅作归档保留，不再维护）
 ├── Version-2/          # 基于 PySide6 的实验性重写（alpha，开发中）
-└── Releases/           # 已发布的打包产物（Windows / macOS）
+│   └── main.py         # alpha 入口
+└── archive/            # 历史文件；迁移清单与恢复方式见 archive/README.md
+    ├── *.py / *.spec   # 历史源码与打包配置
+    ├── Releases/       # 1.1 历史打包产物（Windows / macOS）
+    ├── Version-2/      # 已停用的界面原型 test.py
+    └── resources/      # 当前程序未使用的 ffplay.exe、icon.ico
 ```
 
 ## 功能与操作指南
@@ -170,12 +174,12 @@ Video-Download-Manager/
 
 ## 关于 Version-2 与历史版本
 
-- [`Version-2/`](Version-2/) 是基于 PySide6 的实验性重写，目前仍是 alpha 阶段，未稳定，仅供参考。运行前请额外安装 `PySide6`；开始下载时会查找 `src/` 中的 FFmpeg 或系统 `PATH`，找不到时不会创建下载任务。
-- [`archive/`](archive/) 保留了 1.0.0 到 1.12.0 之间的全部历史版本快照，仅作归档保留，不再维护。
+- [`Version-2/`](Version-2/) 是基于 PySide6 的实验性重写，目前仍是 alpha 阶段，未稳定，尚未发布为 2.0。运行前请额外安装 `PySide6`；开始下载时会查找 `src/` 中的 FFmpeg 或系统 `PATH`，找不到时不会创建下载任务。
+- [`archive/`](archive/) 保留历史源码（含旧版 `1.12.1_mac.py`）、1.1 安装包、旧界面原型及闲置资源，仅作归档保留，不再维护。迁移清单与恢复方式见 [`archive/README.md`](archive/README.md)。
 
 ### Version-2 从源码启动
 
-以下命令均在**仓库根目录**执行。入口是 `Version-2/main.py`；`Version-2/test.py` 只是界面原型，不会执行真实下载。建议使用 Python 3.11 或以上版本；当前 yt-dlp 的 Python 支持范围见[上游依赖说明](https://github.com/yt-dlp/yt-dlp#dependencies)。
+以下命令均在**仓库根目录**执行。入口是 `Version-2/main.py`；旧界面原型已移至 [`archive/Version-2/test.py`](archive/Version-2/test.py)，不会执行真实下载。建议使用 Python 3.11 或以上版本；当前 yt-dlp 的 Python 支持范围见[上游依赖说明](https://github.com/yt-dlp/yt-dlp#dependencies)。
 
 1. 创建虚拟环境（已有 `.venv` 时跳过）。
 

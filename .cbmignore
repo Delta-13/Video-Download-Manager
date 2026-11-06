@@ -1,0 +1,2 @@
+# Keep the active-code graph free of historical snapshots and bundled dependencies.
+archive/

@@ -6,13 +6,13 @@
 
 | 位置 | 职责 |
 |---|---|
-| [`src/`](src/) | tkinter 稳定版：Windows、macOS 各有一个入口，共用输入校验模块 |
+| [`src/`](src/) | tkinter 最新稳定源码：Windows 1.12.1、macOS 1.12.2，共用输入校验模块 |
 | [`Version-2/`](Version-2/) | PySide6 alpha 重写，入口、窗口、下载线程和设置对话框分开存放 |
 | [`tests/`](tests/) | 标准库 `unittest` 回归测试，不依赖安装 Qt 或真实下载 |
-| [`archive/`](archive/) | 历史源码快照，不作为当前开发入口 |
-| [`Releases/`](Releases/) | 历史打包产物，版本不一定与当前源码同步 |
+| [`archive/`](archive/) | 历史源码、旧界面原型及闲置资源；迁移清单见 [`archive/README.md`](archive/README.md) |
+| [`archive/Releases/`](archive/Releases/) | 1.1 历史打包产物，保留完整分发目录 |
 
-稳定版与 Version-2 是两个独立 GUI。Version-2 没有调用稳定版下载类，也没有复用 `src/validation.py`；修改一个版本不会自动改变另一个版本。
+稳定版与 Version-2 是两个独立 GUI。Version-2 仍为 alpha，尚未发布为 2.0。整理时本地最高 Git tag 为 `v1.9.0`，不能据此判断最新源码版本。Version-2 没有调用稳定版下载类，也没有复用 `src/validation.py`；修改一个版本不会自动改变另一个版本。
 
 ## 2. Version-2 模块职责
 
@@ -22,7 +22,8 @@
 | [`mainwindow.py`](Version-2/mainwindow.py) | `MainWindow`、`_is_valid_http_url()` | 构建界面、读取默认设置、校验输入、创建下载任务、更新任务表格 |
 | [`downloader.py`](Version-2/downloader.py) | `find_ffmpeg_location()`、`DownloadThread` | 查找 FFmpeg、配置 yt-dlp、在 `QThread` 中下载并发送进度信号 |
 | [`settingsdialog.py`](Version-2/settingsdialog.py) | `SettingsDialog` | 编辑和保存偏好设置 |
-| [`test.py`](Version-2/test.py) | 独立的 `MainWindow` | 早期界面原型，只向表格添加示例行；不是自动化测试或真实下载入口 |
+
+早期界面原型已移至 [`archive/Version-2/test.py`](archive/Version-2/test.py)，其中独立的 `MainWindow` 只向表格添加示例行，不属于当前运行链路或自动化测试。
 
 ### 启动与下载流程
 
